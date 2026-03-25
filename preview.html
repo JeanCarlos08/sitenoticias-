@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI News Portal - Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --accent-cyan: #00f2ff;
+            --accent-purple: #7000ff;
+            --text-main: #f8f9fa;
+            --text-muted: #94a3b8;
+            --gradient-primary: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-dark); color: var(--text-main); font-family: var(--font-main); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        h1, h2, h3, .brand { font-family: var(--font-display); font-weight: 700; }
+
+        .glass { background: var(--bg-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border-glass); }
+        .glow-card { background: var(--bg-card); border: 1px solid var(--border-glass); transition: all 0.3s ease; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
+        .glow-card:hover { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 242, 255, 0.15); transform: translateY(-4px); }
+
+        .brand { font-size: 24px; letter-spacing: 1px; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fillColor: transparent; }
+        
+        header { padding: 20px 0; position: sticky; top: 0; z-index: 100; width: 100%; }
+        main { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .nav-container { display: flex; justify-content: space-between; alignItems: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        nav ul { display: flex; list-style: none; gap: 30px; font-size: 14px; font-weight: 500; }
+        nav li { cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+        nav li:hover { color: var(--text-main); }
+
+        .hero { height: 450px; background: linear-gradient(rgba(10,10,12,0.6), rgba(10,10,12,0.6)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'); background-size: cover; background-position: center; display: flex; alignItems: center; justifyContent: center; margin-bottom: 60px; border-bottom: 1px solid var(--border-glass); }
+        .hero-content { padding: 50px; border-radius: 20px; max-width: 800px; text-align: center; }
+
+        .btn-primary { background: var(--gradient-primary); color: white; padding: 10px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: opacity 0.2s; font-size: 12px; }
+
+        .news-grid { display: grid; grid-templateColumns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+        .category { font-size: 12px; fontWeight: 600; color: var(--accent-purple); text-transform: uppercase; margin-bottom: 12px; display: block; }
+        .date { font-size: 11px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <header class="glass">
+        <div class="nav-container">
+            <div class="brand">AI NEWS PORTAL</div>
+            <nav>
+                <ul>
+                    <li>Home</li>
+                    <li>Geopolítica</li>
+                    <li>IA</li>
+                    <li>Misério</li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content glass">
+            <h1 style="font-size: 52px; margin-bottom: 16px;">As Notícias de Amanhã, <span style="color: var(--accent-cyan)">Hoje.</span></h1>
+            <p style="color: var(--text-muted); font-size: 18px; margin-bottom: 24px;">Informação curada por Inteligência Artificial em tempo real com tópicos de Geopolítica e Mistérios.</p>
+        </div>
+    </section>
+
+    <main>
+        <div class="news-grid">
+            <div class="glow-card">
+                <span class="category">Geopolítica</span>
+                <h3 style="font-size: 22px; margin-bottom: 12px; line-height: 1.4;">Novas Alianças Definem o Cenário Global em 2026</h3>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">Tratados comerciais entre blocos emergentes sinalizam uma mudança no eixo de poder econômico mundial.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="date">20 Mar 2026</span>
+                    <button class="btn-primary">Ler mais</button>
+                </div>
+            </div>
+
+            <div class="glow-card">
+                <span class="category">Inteligência Artificial</span>
+                <h3 style="font-size: 22px; margin-bottom: 12px; line-height: 1.4;">IA Alcança Raciocínio de Nível Humano</h3>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">A mais recente atualização dos modelos de linguagem demonstra capacidade de resolver problemas matemáticos complexos.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="date">19 Mar 2026</span>
+                    <button class="btn-primary">Ler mais</button>
+                </div>
+            </div>
+
+            <div class="glow-card">
+                <span class="category">Teoria da Conspiração</span>
+                <h3 style="font-size: 22px; margin-bottom: 12px; line-height: 1.4;">O Mistério dos Cabos Submarinos</h3>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">Relatos de ruídos inexplicáveis em profundidades abissais levantam questões sobre o que realmente ocorre nos oceanos.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="date">18 Mar 2026</span>
+                    <button class="btn-primary">Ler mais</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer style="margin-top: 80px; padding: 60px 0; border-top: 1px solid var(--border-glass); text-align: center;">
+        <p style="color: var(--text-muted); font-size: 14px;">&copy; 2026 AI News Portal. Criado com IA.</p>
+    </footer>
+</body>
+</html>

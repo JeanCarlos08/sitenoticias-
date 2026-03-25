@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "category": "Geopolítica",
+    "title": "Novas Alianças Definem o Cenário Global em 2026",
+    "excerpt": "Tratados comerciais entre blocos emergentes sinalizam uma mudança no eixo de poder econômico mundial, desafiando potências tradicionais.",
+    "date": "20 Mar 2026"
+  },
+  {
+    "id": 2,
+    "category": "Inteligência Artificial",
+    "title": "Modelos de IA Alcançam Raciocínio de Nível Humano",
+    "excerpt": "A mais recente atualização dos modelos de linguagem demonstra capacidade de resolver problemas matemáticos complexos que antes eram exclusivos de PhDs.",
+    "date": "19 Mar 2026"
+  },
+  {
+    "id": 3,
+    "category": "Teoria da Conspiração",
+    "title": "O Mistério dos Cabos Submarinos",
+    "excerpt": "Relatos de ruídos inexplicáveis em profundidades abissais levantam questões sobre o que realmente está acontecendo no fundo dos oceanos.",
+    "date": "18 Mar 2026"
+  },
+  {
+    "id": 4,
+    "category": "Tecnologia",
+    "title": "Chips Fotônicos: A Revolução da Velocidade",
+    "excerpt": "Novos processadores baseados em luz prometem reduzir o consumo de energia em 90% enquanto triplicam a velocidade de processamento.",
+    "date": "17 Mar 2026"
+  }
+]

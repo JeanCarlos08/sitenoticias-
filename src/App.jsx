@@ -7,11 +7,12 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Todas')
 
-  const categories = ['Todas', ...new Set(newsData.map(item => item.category))]
+  const safeNewsData = Array.isArray(newsData) ? newsData : [];
+  const categories = ['Todas', ...new Set(safeNewsData.map(item => item?.category).filter(Boolean))]
 
-  const filteredNews = newsData.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          item.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredNews = safeNewsData.filter(item => {
+    const matchesSearch = item.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          item.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === 'Todas' || item.category === selectedCategory
     return matchesSearch && matchesCategory
   })

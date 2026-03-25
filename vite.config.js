@@ -5,5 +5,5 @@ import react from '@vitejs/plugin-react'
 // base: nome do repositório no GitHub (importante para GitHub Pages)
 export default defineConfig({
   plugins: [react()],
-  base: '/sitenoticias-/',
+  base: './',
 })

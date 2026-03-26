@@ -26,7 +26,7 @@ function App() {
           </div>
           <nav>
             <ul style={{ display: 'flex', listStyle: 'none', gap: '30px', fontSize: '14px', fontWeight: 500 }}>
-              {['Home', 'Tecnologia', 'Negócios', 'Ciência'].map(cat => (
+              {['Home', 'Geopolítica', 'I.A.', 'Mistérios'].map(cat => (
                 <li key={cat} style={{ cursor: 'pointer', color: 'var(--text-muted)' }}>{cat}</li>
               ))}
             </ul>
@@ -36,8 +36,8 @@ function App() {
 
       <section className="hero" style={{ height: '400px', backgroundImage: `url(${headerImg})`, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '40px' }}>
         <div className="glass" style={{ padding: '40px', borderRadius: '16px', maxWidth: '800px', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '48px', marginBottom: '16px' }}>As Notícias de Amanhã, <span style={{ color: 'var(--accent-cyan)' }}>Hoje.</span></h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '18px' }}>Informação curada e gerada por Inteligência Artificial em tempo real.</p>
+          <h1 style={{ fontSize: '48px', marginBottom: '16px' }}>O Futuro <span style={{ color: 'var(--accent-purple)' }}>Decodificado.</span>Notícias que Viciam.</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '18px' }}>Geopolítica, I.A. e os Mistérios que ninguém te conta. Curadoria ultra-rápida por Inteligência Artificial.</p>
         </div>
       </section>
 

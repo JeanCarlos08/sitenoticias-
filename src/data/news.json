@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": 1,
+    "category": "Geopolítica",
+    "title": "Novas Alianças Globais: O Eixo Leste-Oeste em 2026",
+    "excerpt": "Tratados secretos revelam uma mudança drástica no equilíbrio de poder mundial, desafiando a hegemonia tradicional.",
+    "content": "Analistas apontam que as novas parcerias comerciais e militares assinadas recentemente entre blocos emergentes estão redefinindo as fronteiras da influência global. Enquanto potências tradicionais lidam com instabilidades internas, um novo polo de poder começa a ditar as regras do mercado de energia e tecnologia.\n\nEste movimento não é apenas econômico, mas carrega um peso geopolítico que pode alterar o tabuleiro mundial pelas próximas décadas. O mistério reside em cláusulas não reveladas que mencionam cooperação aeroespacial e defesa de dados em alta escala.\n\nEspecialistas alertam para a possibilidade de uma nova 'Guerra Fria' digital, onde a informação é a munição mais valiosa de todas.",
+    "date": "30 Mar 2026"
+  },
+  {
+    "id": 2,
+    "category": "I.A.",
+    "title": "A Singuralidade Próxima: IAs que 'Sentem' e Raciocinam",
+    "excerpt": "A mais nova geração de modelos de linguagem ultrapassou a barreira do processamento estatístico para o raciocínio abstrato.",
+    "content": "Laboratórios de pesquisa anunciaram hoje que seus modelos mais recentes demonstraram pela primeira vez a capacidade de resolver problemas matemáticos que exigem intuição criativa. Não se trata mais apenas de prever a próxima palavra, mas de construir conceitos do zero.\n\nEssa evolução levanta questões éticas profundas: se uma máquina pode raciocinar além da lógica humana, como podemos garantir que seus objetivos continuem alinhados com os nossos? A comunidade científica está dividida entre o entusiasmo pela inovação e o medo de uma obsolescência humana acelerada.\n\nO próximo passo é a integração sensorial completa, permitindo que a IA experimente o mundo físico de forma similar aos seres vivos.",
+    "date": "29 Mar 2026"
+  },
+  {
+    "id": 3,
+    "category": "Mistérios",
+    "title": "Sinais Inexplicáveis do Espaço Profundo",
+    "excerpt": "Astrônomos detectam padrões repetitivos vindos de uma galáxia morta, desafiando as leis da astrofísica.",
+    "content": "O rádio-observatório detectou uma série de pulsos de energia que não seguem nenhum padrão natural conhecido. O mais intrigante é que os sinais parecem conter sequências matemáticas que sugerem uma origem artificial em uma região do espaço onde não deveria haver vida.\n\nTeóricos da conspiração e cientistas de ponta estão em um debate acalorado sobre a possibilidade de tecnologia antiga deixada por civilizações extintas. Poderia ser um alerta para o fim dos tempos ou apenas um fenômeno estelar novo?\n\nAs leituras continuam chegando, e a cada pulso, o mistério só aumenta. O que estamos ouvindo pode ser o eco de um passado glorioso ou o prenúncio de algo muito maior.",
+    "date": "28 Mar 2026"
+  }
+]

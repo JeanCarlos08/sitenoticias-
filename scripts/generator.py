@@ -52,22 +52,25 @@ def generate_article(news_item):
     }
     
     prompt = f"""
-    Como um jornalista investigativo de elite de um portal focado em alto impacto e 'dopamina',
-    escreva um post curto e viciante sobre esta notícia: '{news_item['title']}'.
+    Como um renomado jornalista investigativo especializado em temas de alto impacto,
+    escreva um artigo completo, profundo e viciante sobre esta notícia: '{news_item['title']}'.
+    
+    Estrutura do Artigo:
+    1. Título Explosivo: Curto e impactante.
+    2. Introdução (Excerpt): 2 frases que criam curiosidade extrema.
+    3. Corpo do Texto (Content): De 3 a 5 parágrafos detalhados, explorando o contexto, as implicações e o mistério por trás da notícia.
     
     Regras:
-    1. Idioma: Português do Brasil.
-    2. Tom: Provocativo, intrigante e profissional. Use ganchos que prendam a atenção.
-    3. Categoria: Deve ser exatamente uma destas: {news_item['category']}.
-    4. Formato: Retorne APENAS um objeto JSON com:
-       - title: Um título curto e explosivo.
-       - excerpt: Um resumo de 2-3 frases que cause curiosidade extrema.
-       - category: A categoria mencionada acima.
+    - Idioma: Português do Brasil.
+    - Tom: Provocativo, intrigante e profissional. 
+    - Categoria: Deve ser exatamente uma destas: {news_item['category']}.
+    - Formato: Retorne APENAS um objeto JSON válido com as chaves: 'title', 'excerpt', 'content', 'category'.
     """
 
     data = {
         "model": "llama3-8b-8192",
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": [{"role": "system", "content": "Você é um mestre da narrativa jornalística digital."},
+                     {"role": "user", "content": prompt}],
         "response_format": {"type": "json_object"}
     }
     

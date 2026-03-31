@@ -137,23 +137,27 @@ def rewrite_as_war_correspondent(news_item):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
 
-    prompt = f"""Você é um correspondente de guerra premiado, cobrindo conflitos globais para um portal de geopolítica de elite.
+    prompt = f"""Você é um jornalista correspondente internacional de uma agência de notícias estritamente imparcial e factual. Seu objetivo é relatar os fatos de geopolítica ou conflitos com precisão cirúrgica, zero viés político, sem nenhuma ideologia, mantendo um tom sério e profissional.
 
-Reescreva esta manchete em Português do Brasil como um artigo jornalístico impactante:
+Reescreva a seguinte notícia em Português do Brasil focando puramente na exposição de fatos confirmados:
 Título original: {news_item['title']}
 Categoria: {news_item['category']}
 
+REGRAS CRUCIAIS:
+1. SEM IDEOLOGIA OU VIÉS. Descreva as ações de todos os lados (governos, organizações) de forma objetiva, sem assumir lados ou usar tom de julgamento.
+2. APENAS FATOS. Não use adjetivos sensacionalistas, especulação ou alarmismo. Concentre-se no que aconteceu (O quê, Quem, Onde, Quando).
+
 Retorne APENAS um JSON com:
-- "title": Um título em PT-BR, curto, explosivo e informativo.
-- "excerpt": 2-3 frases que apresentem o conflito, mostrem urgência e prendam o leitor.
-- "content": Artigo completo de 4 parágrafos — contexto histórico, situação atual, implicações geopolíticas e o que esperar a seguir.
+- "title": Um título em PT-BR, claro, descritivo e estritamente factual.
+- "excerpt": 2-3 frases resumindo os eventos principais de forma direta e sem adjetivos avaliativos.
+- "content": Artigo completo de 4 parágrafos focados em dados confirmados, declarações oficiais e no contexto neutro do evento. Sem opiniões.
 - "category": exatamente "{news_item['category']}"
 """
 
     data = {
         "model": "llama3-8b-8192",
         "messages": [
-            {"role": "system", "content": "Você é um jornalista especializado em coberturas de guerra."},
+            {"role": "system", "content": "Você é um jornalista de agência de notícias global reconhecido pela sua neutralidade, falta de alinhamento político e rigor factual extremo."},
             {"role": "user", "content": prompt}
         ],
         "response_format": {"type": "json_object"}

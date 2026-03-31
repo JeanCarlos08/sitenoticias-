@@ -2,51 +2,69 @@ import React, { useState } from 'react'
 import './index.css'
 import newsData from './data/news.json'
 
-const categoryEmoji = {
-  'Geopolítica': '🌍',
-  'I.A.': '🤖',
-  'Mistérios': '🔮',
-  'Dopamina': '⚡',
-  default: '📰'
+const CAT_ICON = {
+  'Conflitos':     '💥',
+  'OTAN':          '🛡️',
+  'Oriente Médio': '🕌',
+  'Leste Europeu': '🌍',
+  'Geopolítica':   '🗺️',
+  default:         '📡'
 }
 
+const TICKER_TOPICS = [
+  '🚨 GUERRA • Tensões aumentam no Leste Europeu',
+  '⚠️ ALERTA • Novos ataques registrados no Oriente Médio',
+  '🛡️ OTAN • Aliança reforça posicionamento nas fronteiras',
+  '📡 CORRESPONDENTE • Cobertura ao vivo dos conflitos globais',
+  '🗺️ GEOPOLÍTICA • Mudanças no equilíbrio de poder mundial',
+]
+
 function App() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('Todas')
-  const [selectedArticle, setSelectedArticle] = useState(null)
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('Todas')
+  const [article, setArticle] = useState(null)
 
-  const safeNews = Array.isArray(newsData) ? newsData : []
-  const categories = ['Todas', ...new Set(safeNews.map(i => i?.category).filter(Boolean))]
+  const data = Array.isArray(newsData) ? newsData : []
+  const cats = ['Todas', ...new Set(data.map(i => i?.category).filter(Boolean))]
 
-  const filtered = safeNews.filter(item => {
-    const q = searchTerm.toLowerCase()
-    const matchSearch = !q || item.title?.toLowerCase().includes(q) || item.excerpt?.toLowerCase().includes(q)
-    const matchCat = selectedCategory === 'Todas' || item.category === selectedCategory
-    return matchSearch && matchCat
+  const filtered = data.filter(item => {
+    const q = search.toLowerCase()
+    return (
+      (!q || item.title?.toLowerCase().includes(q) || item.excerpt?.toLowerCase().includes(q)) &&
+      (category === 'Todas' || item.category === category)
+    )
   })
 
   const featured = filtered[0]
-  const rest = filtered.slice(1)
-
-  const closeModal = () => setSelectedArticle(null)
+  const rest     = search ? filtered : filtered.slice(1)
 
   return (
     <div className="app-container">
 
+      {/* ── Breaking news ticker ── */}
+      <div className="ticker">
+        <span className="ticker-inner">
+          {[...TICKER_TOPICS, ...TICKER_TOPICS].map((t, i) => (
+            <span key={i} style={{ marginRight: '80px' }}>🔴 {t}</span>
+          ))}
+        </span>
+      </div>
+
       {/* ── Header ── */}
       <header className="header">
         <div className="container header-inner">
-          <div className="brand">AI<span className="brand-dot">.</span>NEWS</div>
-          <div className="header-meta">
-            Última atualização: <span>{safeNews[0]?.date || 'Hoje'}</span>
+          <div>
+            <div className="brand">⚔️ WARZONE NEWS</div>
+            <span className="brand-sub">Portal de Geopolítica &amp; Conflitos Globais</span>
           </div>
+          <div className="live-dot">AO VIVO</div>
           <nav>
             <ul className="nav-list">
-              {['Home', 'Geopolítica', 'I.A.', 'Mistérios', 'Dopamina'].map(item => (
+              {['Home', 'Conflitos', 'OTAN', 'Oriente Médio', 'Leste Europeu'].map(item => (
                 <li
                   key={item}
                   className="nav-item"
-                  onClick={() => setSelectedCategory(item === 'Home' ? 'Todas' : item)}
+                  onClick={() => setCategory(item === 'Home' ? 'Todas' : item)}
                 >
                   {item}
                 </li>
@@ -59,59 +77,48 @@ function App() {
       {/* ── Hero ── */}
       <section className="hero">
         <div className="container">
-          <div className="hero-eyebrow">⚡ ALIMENTADO POR IA</div>
+          <div className="hero-eyebrow">🚨 COBERTURA EM TEMPO REAL</div>
           <h1 className="hero-title">
-            O Futuro <span className="highlight">Decodificado.</span><br />
-            Notícias que Viciam.
+            Guerras &amp; Conflitos<br />
+            <span className="accent">Geopolítica Global</span>
           </h1>
           <p className="hero-sub">
-            Geopolítica, Inteligência Artificial e os Mistérios que ninguém te conta.
-            Curadoria automatizada por IA, atualizada todo dia.
+            As últimas notícias dos conflitos ao redor do mundo, coletadas de
+            múltiplas fontes e reescritas por correspondentes de IA em tempo real.
           </p>
           <div className="hero-stats">
-            <div>
-              <div className="stat-value">{safeNews.length}</div>
-              <div className="stat-label">Artigos Hoje</div>
-            </div>
-            <div>
-              <div className="stat-value">4</div>
-              <div className="stat-label">Categorias</div>
-            </div>
-            <div>
-              <div className="stat-value">24h</div>
-              <div className="stat-label">Atualização</div>
-            </div>
-            <div>
-              <div className="stat-value">100%</div>
-              <div className="stat-label">Gerado por IA</div>
-            </div>
+            <div><div className="stat-val">{data.length}</div><div className="stat-lbl">Reportagens</div></div>
+            <div><div className="stat-val">3+</div><div className="stat-lbl">Fontes</div></div>
+            <div><div className="stat-val">24h</div><div className="stat-lbl">Atualização</div></div>
+            <div><div className="stat-val">100%</div><div className="stat-lbl">Automatizado</div></div>
           </div>
         </div>
       </section>
 
-      {/* ── Main content ── */}
+      {/* ── Main ── */}
       <main className="container">
 
-        {/* ── Featured article ── */}
-        {featured && searchTerm === '' && (
-          <section className="featured-section">
-            <div className="section-label">🔥 DESTAQUE DO DIA</div>
-            <div className="featured-card" onClick={() => setSelectedArticle(featured)}>
-              <div className="featured-card-inner">
+        {/* ── Featured ── */}
+        {featured && !search && (
+          <>
+            <div className="section-label">🔥 ÚLTIMA HORA</div>
+            <div className="featured-card" onClick={() => setArticle(featured)}>
+              <div className="featured-inner">
                 <div>
                   <div className="featured-badge">{featured.category}</div>
                   <h2 className="featured-title">{featured.title}</h2>
                   <p className="featured-excerpt">{featured.excerpt}</p>
-                  <button className="featured-read-btn">
-                    Ler artigo completo <span>→</span>
-                  </button>
+                  {featured.source_label && (
+                    <p className="featured-source">Fonte: {featured.source_label}</p>
+                  )}
+                  <button className="btn-war">Ler reportagem completa →</button>
                 </div>
-                <div className="featured-icon" aria-hidden="true">
-                  {categoryEmoji[featured.category] || categoryEmoji.default}
+                <div className="featured-icon" aria-hidden>
+                  {CAT_ICON[featured.category] || CAT_ICON.default}
                 </div>
               </div>
             </div>
-          </section>
+          </>
         )}
 
         {/* ── Filters ── */}
@@ -119,69 +126,72 @@ function App() {
           <input
             type="text"
             className="search-input"
-            placeholder="🔍  Pesquisar notícias..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="🔍  Buscar conflitos, países, operações..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
           />
           <div className="cat-buttons">
-            {categories.map(cat => (
+            {cats.map(c => (
               <button
-                key={cat}
-                className={`cat-btn ${selectedCategory === cat ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
+                key={c}
+                className={`cat-btn ${category === c ? 'active' : ''}`}
+                onClick={() => setCategory(c)}
               >
-                {cat}
+                {c}
               </button>
             ))}
           </div>
         </div>
 
-        {/* ── News grid ── */}
+        {/* ── Grid ── */}
         <div className="section-label">
-          {selectedCategory === 'Todas' ? '📰 TODAS AS NOTÍCIAS' : `${categoryEmoji[selectedCategory] || '📰'} ${selectedCategory.toUpperCase()}`}
+          {category === 'Todas' ? '📡 TODAS AS REPORTAGENS' : `${CAT_ICON[category] || '📡'} ${category.toUpperCase()}`}
         </div>
         <div className="news-grid">
-          {(searchTerm !== '' ? filtered : rest).length > 0 ? (
-            (searchTerm !== '' ? filtered : rest).map(item => (
-              <article key={item.id} className="news-card" onClick={() => setSelectedArticle(item)}>
-                <span className="card-category">{item.category}</span>
-                <h3 className="card-title">{item.title}</h3>
-                <p className="card-excerpt">{item.excerpt}</p>
-                <div className="card-footer">
-                  <span className="card-date">{item.date}</span>
-                  <button className="card-btn">Ler mais →</button>
+          {rest.length > 0 ? rest.map(item => (
+            <article key={item.id} className="news-card" onClick={() => setArticle(item)}>
+              <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
+              <h3 className="card-title">{item.title}</h3>
+              <p className="card-excerpt">{item.excerpt}</p>
+              <div className="card-footer">
+                <div>
+                  {item.source_label && <div className="card-source">{item.source_label}</div>}
+                  <div className="card-date">{item.date}</div>
                 </div>
-              </article>
-            ))
-          ) : (
+                <button className="card-btn">Ler →</button>
+              </div>
+            </article>
+          )) : (
             <div className="empty-state">
-              <div className="empty-state-icon">🔍</div>
-              <p>Nenhuma notícia encontrada.<br />Tente outro termo ou categoria.</p>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
+              <p>Nenhuma reportagem encontrada.</p>
             </div>
           )}
         </div>
       </main>
 
-      {/* ── Article Modal ── */}
-      {selectedArticle && (
-        <div className="modal-backdrop" onClick={closeModal}>
+      {/* ── Modal ── */}
+      {article && (
+        <div className="modal-backdrop" onClick={() => setArticle(null)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeModal}>×</button>
+            <button className="modal-close" onClick={() => setArticle(null)}>×</button>
             <div className="modal-category">
-              {categoryEmoji[selectedArticle.category]} {selectedArticle.category}
+              {CAT_ICON[article.category]} {article.category}
             </div>
-            <h2 className="modal-title">{selectedArticle.title}</h2>
-            <span className="modal-date">Publicado em {selectedArticle.date}</span>
+            <h2 className="modal-title">{article.title}</h2>
+            <div className="modal-meta">
+              <span>📅 {article.date}</span>
+              {article.source_label && <span>{article.source_label}</span>}
+            </div>
             <div className="modal-divider" />
             <div className="modal-body">
-              {selectedArticle.content
-                ? selectedArticle.content.split('\n').filter(Boolean).map((p, i) => <p key={i}>{p}</p>)
-                : <p>{selectedArticle.excerpt}</p>
-              }
+              {article.content
+                ? article.content.split('\n').filter(Boolean).map((p, i) => <p key={i}>{p}</p>)
+                : <p>{article.excerpt}</p>}
             </div>
             <div className="modal-footer">
-              <span>© AI News Portal — Gerado por Inteligência Artificial</span>
-              <button className="cat-btn" onClick={closeModal}>Fechar</button>
+              <span>© Warzone News — Powered by AI</span>
+              <button className="cat-btn active" onClick={() => setArticle(null)}>Fechar</button>
             </div>
           </div>
         </div>
@@ -190,9 +200,10 @@ function App() {
       {/* ── Footer ── */}
       <footer className="footer">
         <div className="container">
-          <div className="footer-logo">AI.NEWS PORTAL</div>
+          <div className="footer-logo">⚔️ WARZONE NEWS</div>
           <p className="footer-sub">
-            Notícias do futuro, hoje. Gerado e curado por Inteligência Artificial.
+            Cobertura de conflitos globais em tempo real — gerada e curada por Inteligência Artificial.<br />
+            Fontes: Google News • Reddit • NewsAPI
           </p>
         </div>
       </footer>

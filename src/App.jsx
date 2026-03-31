@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import './index.css'
 import newsData from './data/news.json'
 
@@ -23,6 +23,15 @@ function App() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('Todas')
   const [article, setArticle] = useState(null)
+
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef(null)
+
+  const toggleAudio = () => {
+    if (!audioRef.current) return
+    if (isPlaying) { audioRef.current.pause(); setIsPlaying(false); }
+    else { audioRef.current.play(); setIsPlaying(true); }
+  }
 
   const data = Array.isArray(newsData) ? newsData : []
   const cats = ['Todas', ...new Set(data.map(i => i?.category).filter(Boolean))]
@@ -57,7 +66,13 @@ function App() {
             <div className="brand">⚔️ WARZONE NEWS</div>
             <span className="brand-sub">Portal de Geopolítica &amp; Conflitos Globais</span>
           </div>
-          <div className="live-dot">AO VIVO</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="live-dot">AO VIVO</div>
+            <button className={`audio-btn ${isPlaying ? 'playing' : ''}`} onClick={toggleAudio}>
+              {isPlaying ? '🔊 AUDIO ON' : '🔈 AUDIO OFF'}
+            </button>
+            <audio ref={audioRef} loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" />
+          </div>
           <nav>
             <ul className="nav-list">
               {['Home', 'Conflitos', 'OTAN', 'Oriente Médio', 'Leste Europeu'].map(item => (
@@ -107,6 +122,9 @@ function App() {
                 <div>
                   <div className="featured-badge">{featured.category}</div>
                   <h2 className="featured-title">{featured.title}</h2>
+                  {featured.image_url && (
+                    <img src={featured.image_url} alt={featured.title} className="featured-img" />
+                  )}
                   <p className="featured-excerpt">{featured.excerpt}</p>
                   {featured.source_label && (
                     <p className="featured-source">Fonte: {featured.source_label}</p>
@@ -151,6 +169,9 @@ function App() {
           {rest.length > 0 ? rest.map(item => (
             <article key={item.id} className="news-card" onClick={() => setArticle(item)}>
               <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
+              {item.image_url && (
+                <img src={item.image_url} alt={item.title} className="card-img" />
+              )}
               <h3 className="card-title">{item.title}</h3>
               <p className="card-excerpt">{item.excerpt}</p>
               <div className="card-footer">
@@ -184,6 +205,23 @@ function App() {
               {article.source_label && <span>{article.source_label}</span>}
             </div>
             <div className="modal-divider" />
+            
+            {(article.youtube_id || article.image_url) && (
+              <div className="modal-media">
+                {article.youtube_id ? (
+                  <iframe 
+                    width="100%" height="360" 
+                    src={`https://www.youtube.com/embed/${article.youtube_id}`} 
+                    title="YouTube video player" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                  />
+                ) : (
+                  <img src={article.image_url} alt={article.title} />
+                )}
+              </div>
+            )}
+
             <div className="modal-body">
               {article.content
                 ? article.content.split('\n').filter(Boolean).map((p, i) => <p key={i}>{p}</p>)

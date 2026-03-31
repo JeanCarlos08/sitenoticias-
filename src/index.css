@@ -200,6 +200,16 @@ h1,h2,h3,h4,.brand{font-family:var(--display);}
 .modal-body p{font-size:16px;line-height:1.85;color:var(--soft);margin-bottom:20px;}
 .modal-footer{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border);margin-top:24px;font-size:12px;color:var(--muted);}
 
+/* Media */
+.card-img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--border); }
+.featured-img { width: 100%; height: 280px; object-fit: cover; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--border); }
+.modal-media { margin-bottom: 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-red); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+.modal-media iframe, .modal-media img { width: 100%; display: block; border: none; }
+.modal-media img { max-height: 400px; object-fit: cover; }
+.audio-btn { background: var(--bg-glass); border: 1px solid var(--border); color: var(--muted); padding: 4px 12px; border-radius: 99px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; text-transform: uppercase; }
+.audio-btn.playing { color: var(--red); border-color: var(--red); box-shadow: 0 0 10px var(--red-glow); }
+.audio-btn:hover { color: white; background: rgba(220,38,38,0.1); }
+
 /* Footer */
 .footer{border-top:1px solid var(--border);padding:40px 0;text-align:center;}
 .footer-logo{font-family:var(--display);font-size:18px;font-weight:900;color:var(--red);margin-bottom:6px;}

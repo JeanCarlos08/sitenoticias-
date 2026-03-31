@@ -8,6 +8,7 @@ from urllib.parse import quote
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 WAR_CATEGORIES = ["Conflitos", "OTAN", "Oriente Médio", "Leste Europeu", "Geopolítica"]
 
@@ -107,11 +108,27 @@ def fetch_newsapi():
                             "title": title,
                             "source_label": f"📰 {art['source']['name']}",
                             "source_key": "newsapi",
-                            "category": item["cat"]
+                            "category": item["cat"],
+                            "image_url": art.get("urlToImage", "")
                         })
         except Exception as e:
             print(f"[NewsAPI] Erro: {e}")
     return articles
+
+def fetch_youtube_video(query):
+    """Busca o ID de um vídeo relacionado ao conflito no YouTube"""
+    if not YOUTUBE_API_KEY:
+        return ""
+    url = f"https://www.googleapis.com/youtube/v3/search?q={quote(query)}&key={YOUTUBE_API_KEY}&maxResults=1&type=video"
+    try:
+        resp = requests.get(url, timeout=10)
+        data = resp.json()
+        items = data.get("items", [])
+        if items:
+            return items[0]["id"]["videoId"]
+    except Exception as e:
+        print(f"[YouTube] Erro: {e}")
+    return ""
 
 # ── AI REWRITE ─────────────────────────────────────────────────────────────────
 
@@ -180,6 +197,15 @@ def main():
                 article["date"] = datetime.now().strftime("%d %b %Y")
                 article["source_label"] = raw.get("source_label", "📰 NewsAPI")
                 article["source_key"] = raw.get("source_key", "newsapi")
+                article["image_url"] = raw.get("image_url", "")
+                
+                # Opcional: Busca vídeo no YouTube baseado no título gerado pela IA
+                if YOUTUBE_API_KEY:
+                    print(f"    Buscando vídeo no YouTube...")
+                    article["youtube_id"] = fetch_youtube_video(article["title"] + " news")
+                else:
+                    article["youtube_id"] = ""
+
                 articles.append(article)
             except Exception as e:
                 print(f"  ⚠️ JSON inválido: {e}")

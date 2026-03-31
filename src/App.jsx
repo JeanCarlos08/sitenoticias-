@@ -11,6 +11,18 @@ const CAT_ICON = {
   default:         '📡'
 }
 
+const FALLBACK_IMAGES = {
+  'Conflitos':     'https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=1200&auto=format&fit=crop',
+  'OTAN':          'https://images.unsplash.com/photo-1563200155-276906a2ff5b?q=80&w=1200&auto=format&fit=crop',
+  'Oriente Médio': 'https://images.unsplash.com/photo-1601662400326-f7cc93e62f02?q=80&w=1200&auto=format&fit=crop',
+  'Leste Europeu': 'https://images.unsplash.com/photo-1551829141-857118ee7a21?q=80&w=1200&auto=format&fit=crop',
+  'Geopolítica':   'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1200&auto=format&fit=crop',
+  default:         'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop'
+}
+
+const getImageUrl = (item) => item.image_url && item.image_url !== "" ? item.image_url : (FALLBACK_IMAGES[item.category] || FALLBACK_IMAGES.default);
+
+
 const TICKER_TOPICS = [
   '🚨 GUERRA • Tensões aumentam no Leste Europeu',
   '⚠️ ALERTA • Novos ataques registrados no Oriente Médio',
@@ -122,9 +134,7 @@ function App() {
                 <div>
                   <div className="featured-badge">{featured.category}</div>
                   <h2 className="featured-title">{featured.title}</h2>
-                  {featured.image_url && (
-                    <img src={featured.image_url} alt={featured.title} className="featured-img" />
-                  )}
+                  <img src={getImageUrl(featured)} alt={featured.title} className="featured-img" />
                   <p className="featured-excerpt">{featured.excerpt}</p>
                   {featured.source_label && (
                     <p className="featured-source">Fonte: {featured.source_label}</p>
@@ -169,9 +179,7 @@ function App() {
           {rest.length > 0 ? rest.map(item => (
             <article key={item.id} className="news-card" onClick={() => setArticle(item)}>
               <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
-              {item.image_url && (
-                <img src={item.image_url} alt={item.title} className="card-img" />
-              )}
+              <img src={getImageUrl(item)} alt={item.title} className="card-img" />
               <h3 className="card-title">{item.title}</h3>
               <p className="card-excerpt">{item.excerpt}</p>
               <div className="card-footer">
@@ -206,7 +214,7 @@ function App() {
             </div>
             <div className="modal-divider" />
             
-            {(article.youtube_id || article.image_url) && (
+            {(article.youtube_id || getImageUrl(article)) && (
               <div className="modal-media">
                 {article.youtube_id ? (
                   <iframe 
@@ -217,7 +225,7 @@ function App() {
                     allowFullScreen
                   />
                 ) : (
-                  <img src={article.image_url} alt={article.title} />
+                  <img src={getImageUrl(article)} alt={article.title} />
                 )}
               </div>
             )}

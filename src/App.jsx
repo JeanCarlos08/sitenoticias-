@@ -25,13 +25,18 @@ function App() {
           <div className="brand" style={{ fontSize: '24px', letterSpacing: '1px', background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             AI NEWS PORTAL
           </div>
-          <nav>
-            <ul style={{ display: 'flex', listStyle: 'none', gap: '30px', fontSize: '14px', fontWeight: 500 }}>
-              {['Home', 'Geopolítica', 'I.A.', 'Mistérios'].map(cat => (
-                <li key={cat} style={{ cursor: 'pointer', color: 'var(--text-muted)' }}>{cat}</li>
-              ))}
-            </ul>
-          </nav>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', borderRight: '1px solid var(--border-glass)', paddingRight: '20px' }}>
+              Última atualização: <span style={{ color: 'var(--accent-cyan)' }}>{safeNewsData[0]?.date || 'Hoje'}</span>
+            </div>
+            <nav>
+              <ul style={{ display: 'flex', listStyle: 'none', gap: '20px', fontSize: '14px', fontWeight: 500 }}>
+                {['Home', 'Geopolítica', 'I.A.', 'Mistérios'].map(cat => (
+                  <li key={cat} style={{ cursor: 'pointer', color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = 'white'} onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}>{cat}</li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </main>
       </header>
 

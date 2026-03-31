@@ -3,33 +3,45 @@ import './index.css'
 import newsData from './data/news.json'
 
 const CAT_ICON = {
-  'Conflitos':     '⚡',
-  'OTAN':          '🛡️',
-  'Oriente Médio': '🌍',
-  'Leste Europeu': '🛰️',
-  'Geopolítica':   '📊',
-  default:         '📡'
+  'Conflitos':      '⚡',
+  'OTAN':           '🛡️',
+  'Oriente Médio':  '🌍',
+  'Leste Europeu':  '🛰️',
+  'Geopolítica':    '📊',
+  'Ásia-Pacífico':  '🇨🇳',
+  'áfrica':         '🌎',
+  default:          '📡'
 }
 
 const FALLBACK_IMAGES = {
-  'Conflitos':     'https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=1200&auto=format&fit=crop',
-  'OTAN':          'https://images.unsplash.com/photo-1563200155-276906a2ff5b?q=80&w=1200&auto=format&fit=crop',
-  'Oriente Médio': 'https://images.unsplash.com/photo-1601662400326-f7cc93e62f02?q=80&w=1200&auto=format&fit=crop',
-  'Leste Europeu': 'https://images.unsplash.com/photo-1551829141-857118ee7a21?q=80&w=1200&auto=format&fit=crop',
-  'Geopolítica':   'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1200&auto=format&fit=crop',
-  default:         'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop'
+  'Conflitos':      'https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=1200&auto=format&fit=crop',
+  'OTAN':           'https://images.unsplash.com/photo-1563200155-276906a2ff5b?q=80&w=1200&auto=format&fit=crop',
+  'Oriente Médio':  'https://images.unsplash.com/photo-1601662400326-f7cc93e62f02?q=80&w=1200&auto=format&fit=crop',
+  'Leste Europeu':  'https://images.unsplash.com/photo-1551829141-857118ee7a21?q=80&w=1200&auto=format&fit=crop',
+  'Geopolítica':    'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1200&auto=format&fit=crop',
+  'Ásia-Pacífico':  'https://images.unsplash.com/photo-1535083783855-aaab04b2b09b?q=80&w=1200&auto=format&fit=crop',
+  'Africa':         'https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?q=80&w=1200&auto=format&fit=crop',
+  default:          'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop'
 }
 
 const getImageUrl = (item) => item.image_url && item.image_url !== "" ? item.image_url : (FALLBACK_IMAGES[item.category] || FALLBACK_IMAGES.default);
 
 
 const TICKER_TOPICS = [
-  '🚨 GUERRA • Tensões aumentam no Leste Europeu',
-  '⚠️ ALERTA • Novos ataques registrados no Oriente Médio',
-  '🛡️ OTAN • Aliança reforça posicionamento nas fronteiras',
-  '📡 CORRESPONDENTE • Cobertura ao vivo dos conflitos globais',
-  '🗺️ GEOPOLÍTICA • Mudanças no equilíbrio de poder mundial',
+  '🚨 BREAKING • Tensões aumentam no Leste Europeu',
+  '⚠️ ALERTA • Novos ataques no Oriente Médio',
+  '🛡️ OTAN • Reforço nas fronteiras leste da Europa',
+  '🇨🇳 ÁSIA-PACÍFICO • Movimentações no Estreito de Taiwan',
+  '🌎 ÁFRICA • Novos conflitos no Sahel',
+  '📡 OSINT • Análise em tempo real dos conflitos globais',
+  '📊 GEOPOLÍTICA • Mudanças no equilíbrio de poder mundial',
 ]
+
+const isNew = (article) => {
+  if (!article.published_at) return false
+  const hoursAgo = (Date.now() - new Date(article.published_at)) / 36e5
+  return hoursAgo < 6
+}
 
 const AdSlot = () => <div className="ad-slot" aria-hidden="true" />
 
@@ -197,7 +209,10 @@ function App() {
             <React.Fragment key={item.id}>
               {index > 0 && index % 4 === 0 && <AdSlot />}
               <article className="news-card" onClick={() => setArticle(item)}>
-                <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
+                  {isNew(item) && <span className="badge-new">🔴 NOVO</span>}
+                </div>
                 <img src={getImageUrl(item)} alt={item.title} className="card-img" />
                 <h3 className="card-title">{item.title}</h3>
                 <p className="card-excerpt">{item.excerpt}</p>

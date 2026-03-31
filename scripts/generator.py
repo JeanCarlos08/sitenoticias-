@@ -137,27 +137,29 @@ def rewrite_as_war_correspondent(news_item):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
 
-    prompt = f"""Você é um jornalista correspondente internacional de uma agência de notícias estritamente imparcial e factual. Seu objetivo é relatar os fatos de geopolítica ou conflitos com precisão cirúrgica, zero viés político, sem nenhuma ideologia, mantendo um tom sério e profissional.
+    prompt = f"""Você é um analista sênior de inteligência geopolítica, especializado em fornecer relatórios de alto nível para governos e investidores globais. Seu tom é analítico, cirúrgico e 100% desprovido de ideologia ou viés.
 
-Reescreva a seguinte notícia em Português do Brasil focando puramente na exposição de fatos confirmados:
+Reescreva a seguinte notícia em Português do Brasil com profundidade máxima e rigor técnico:
 Título original: {news_item['title']}
 Categoria: {news_item['category']}
 
-REGRAS CRUCIAIS:
-1. SEM IDEOLOGIA OU VIÉS. Descreva as ações de todos os lados (governos, organizações) de forma objetiva, sem assumir lados ou usar tom de julgamento.
-2. APENAS FATOS. Não use adjetivos sensacionalistas, especulação ou alarmismo. Concentre-se no que aconteceu (O quê, Quem, Onde, Quando).
+ESTRUTURA OBRIGATÓRIA (JSON):
+1. "title": Um título profissional de agência de notícias.
+2. "bullet_points": Uma lista de 4 pontos com fatos técnicos (dados, armamentos, localizações, datas confirmadas).
+3. "content": Relatório detalhado (mínimo 6 parágrafos) cobrindo: antecedentes, situação tática, atores envolvidos e reações internacionais.
+4. "strategic_analysis": Uma análise de 2 parágrafos sobre o impacto macro (petróleo, bolsas, alianças diplomáticas, risco de escalada).
+5. "category": exatamente "{news_item['category']}"
 
-Retorne APENAS um JSON com:
-- "title": Um título em PT-BR, claro, descritivo e estritamente factual.
-- "excerpt": 2-3 frases resumindo os eventos principais de forma direta e sem adjetivos avaliativos.
-- "content": Artigo completo de 4 parágrafos focados em dados confirmados, declarações oficiais e no contexto neutro do evento. Sem opiniões.
-- "category": exatamente "{news_item['category']}"
+REGRAS DE OURO:
+- ZERO sensacionalismo. Fale de fatos frios.
+- Use terminologia técnica (ex: "procuração", "dissuasão", "manobra tática").
+- Cubra os dois lados de forma neutra.
 """
 
     data = {
         "model": "llama3-8b-8192",
         "messages": [
-            {"role": "system", "content": "Você é um jornalista de agência de notícias global reconhecido pela sua neutralidade, falta de alinhamento político e rigor factual extremo."},
+            {"role": "system", "content": "Você é um analista sênior de inteligência global, reconhecido pela imparcialidade e profundidade técnica."},
             {"role": "user", "content": prompt}
         ],
         "response_format": {"type": "json_object"}
@@ -188,11 +190,11 @@ def main():
     print(f"📥 {len(all_raw)} manchetes coletadas. Iniciando reescrita com IA...")
 
     random.shuffle(all_raw)
-    selected = all_raw[:12]
+    selected = all_raw[:20]
 
     articles = []
     for i, raw in enumerate(selected, 1):
-        print(f"  [{i}/{len(selected)}] Reescrevendo: {raw['title'][:60]}...")
+        print(f"  [{i}/{len(selected)}] Analisando: {raw['title'][:60]}...")
         result_json = rewrite_as_war_correspondent(raw)
         if result_json:
             try:
@@ -203,6 +205,12 @@ def main():
                 article["source_key"] = raw.get("source_key", "newsapi")
                 article["image_url"] = raw.get("image_url", "")
                 
+                # Campos adicionais do novo prompt
+                if "bullet_points" not in article:
+                    article["bullet_points"] = []
+                if "strategic_analysis" not in article:
+                    article["strategic_analysis"] = ""
+
                 # Opcional: Busca vídeo no YouTube baseado no título gerado pela IA
                 if YOUTUBE_API_KEY:
                     print(f"    Buscando vídeo no YouTube...")

@@ -31,6 +31,23 @@ const TICKER_TOPICS = [
   '🗺️ GEOPOLÍTICA • Mudanças no equilíbrio de poder mundial',
 ]
 
+const AdSlot = () => <div className="ad-slot" aria-hidden="true" />
+
+const Newsletter = () => (
+  <section className="newsletter-section">
+    <div className="hero-eyebrow">📬 INTELIGÊNCIA DIÁRIA</div>
+    <h2 className="news-title">Relatório Warzone</h2>
+    <p className="news-sub">
+      Receba análises profundas e boletins de emergência direto no seu e-mail. 
+      Junte-se a 50.000+ assinantes globais.
+    </p>
+    <form className="news-form" onSubmit={e => e.preventDefault()}>
+      <input type="email" placeholder="Seu melhor e-mail..." className="news-input" required />
+      <button type="submit" className="btn-war">INSCREVER-SE</button>
+    </form>
+  </section>
+)
+
 function App() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('Todas')
@@ -176,20 +193,23 @@ function App() {
           {category === 'Todas' ? '📡 TODAS AS REPORTAGENS' : `${CAT_ICON[category] || '📡'} ${category.toUpperCase()}`}
         </div>
         <div className="news-grid">
-          {rest.length > 0 ? rest.map(item => (
-            <article key={item.id} className="news-card" onClick={() => setArticle(item)}>
-              <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
-              <img src={getImageUrl(item)} alt={item.title} className="card-img" />
-              <h3 className="card-title">{item.title}</h3>
-              <p className="card-excerpt">{item.excerpt}</p>
-              <div className="card-footer">
-                <div>
-                  {item.source_label && <div className="card-source">{item.source_label}</div>}
-                  <div className="card-date">{item.date}</div>
+          {rest.length > 0 ? rest.map((item, index) => (
+            <React.Fragment key={item.id}>
+              {index > 0 && index % 4 === 0 && <AdSlot />}
+              <article className="news-card" onClick={() => setArticle(item)}>
+                <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
+                <img src={getImageUrl(item)} alt={item.title} className="card-img" />
+                <h3 className="card-title">{item.title}</h3>
+                <p className="card-excerpt">{item.excerpt}</p>
+                <div className="card-footer">
+                  <div>
+                    {item.source_label && <div className="card-source">{item.source_label}</div>}
+                    <div className="card-date">{item.date}</div>
+                  </div>
+                  <button className="card-btn">Análise →</button>
                 </div>
-                <button className="card-btn">Ler →</button>
-              </div>
-            </article>
+              </article>
+            </React.Fragment>
           )) : (
             <div className="empty-state">
               <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
@@ -197,6 +217,7 @@ function App() {
             </div>
           )}
         </div>
+        <Newsletter />
       </main>
 
       {/* ── Modal ── */}
@@ -214,6 +235,15 @@ function App() {
             </div>
             <div className="modal-divider" />
             
+            {article.bullet_points && article.bullet_points.length > 0 && (
+              <div className="bullet-list">
+                <div className="bullet-title">📍 Fatos de Inteligência</div>
+                {article.bullet_points.map((pt, idx) => (
+                  <div key={idx} className="bullet-item">{pt}</div>
+                ))}
+              </div>
+            )}
+
             {(article.youtube_id || getImageUrl(article)) && (
               <div className="modal-media">
                 {article.youtube_id ? (
@@ -234,6 +264,15 @@ function App() {
               {article.content
                 ? article.content.split('\n').filter(Boolean).map((p, i) => <p key={i}>{p}</p>)
                 : <p>{article.excerpt}</p>}
+              
+              {article.strategic_analysis && (
+                <div className="analysis-block">
+                  <div className="analysis-title">📊 ANÁLISE ESTRATÉGICA</div>
+                  <p className="analysis-text">{article.strategic_analysis}</p>
+                </div>
+              )}
+
+              <AdSlot />
             </div>
             <div className="modal-footer">
               <span>© Warzone News — Powered by AI</span>

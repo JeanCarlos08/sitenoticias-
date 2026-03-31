@@ -3,11 +3,11 @@ import './index.css'
 import newsData from './data/news.json'
 
 const CAT_ICON = {
-  'Conflitos':     '💥',
+  'Conflitos':     '⚡',
   'OTAN':          '🛡️',
-  'Oriente Médio': '🕌',
-  'Leste Europeu': '🌍',
-  'Geopolítica':   '🗺️',
+  'Oriente Médio': '🌍',
+  'Leste Europeu': '🛰️',
+  'Geopolítica':   '📊',
   default:         '📡'
 }
 
@@ -92,11 +92,11 @@ function App() {
       <header className="header">
         <div className="container header-inner">
           <div>
-            <div className="brand">⚔️ WARZONE NEWS</div>
-            <span className="brand-sub">Portal de Geopolítica &amp; Conflitos Globais</span>
+            <div className="brand">🛡️ HORIZON INTEL</div>
+            <span className="brand-sub">Strategic Geopolitical Oversight</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div className="live-dot">AO VIVO</div>
+            <div className="live-dot" style={{ background: 'var(--red)', boxShadow: '0 0 12px var(--red-glow)' }}>SIGNAL: ACTIVE</div>
             <button className={`audio-btn ${isPlaying ? 'playing' : ''}`} onClick={toggleAudio}>
               {isPlaying ? '🔊 AUDIO ON' : '🔈 AUDIO OFF'}
             </button>
@@ -121,14 +121,14 @@ function App() {
       {/* ── Hero ── */}
       <section className="hero">
         <div className="container">
-          <div className="hero-eyebrow">🚨 COBERTURA EM TEMPO REAL</div>
+          <div className="hero-eyebrow">📡 REAL-TIME GLOBAL MONITORING</div>
           <h1 className="hero-title">
-            Guerras &amp; Conflitos<br />
-            <span className="accent">Geopolítica Global</span>
+            Inteligência Estratégica<br />
+            <span className="accent">&amp; Vigilância Global</span>
           </h1>
           <p className="hero-sub">
-            As últimas notícias dos conflitos ao redor do mundo, coletadas de
-            múltiplas fontes e reescritas por correspondentes de IA em tempo real.
+            Análises profundas de conflitos e movimentos geopolíticos em tempo real, 
+            processadas por nossa rede de inteligência artificial autônoma.
           </p>
           <div className="hero-stats">
             <div><div className="stat-val">{data.length}</div><div className="stat-lbl">Reportagens</div></div>
@@ -285,10 +285,10 @@ function App() {
       {/* ── Footer ── */}
       <footer className="footer">
         <div className="container">
-          <div className="footer-logo">⚔️ WARZONE NEWS</div>
+          <div className="footer-logo">🛡️ HORIZON INTEL</div>
           <p className="footer-sub">
-            Cobertura de conflitos globais em tempo real — gerada e curada por Inteligência Artificial.<br />
-            Fontes: Google News • Reddit • NewsAPI
+            Monitoramento geopolítico de alta precisão — IA curada e automatizada.<br />
+            Data Sources: Google Intelligence • OSINT Reddit • Global NewsAPI
           </p>
         </div>
       </footer>

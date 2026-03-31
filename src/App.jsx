@@ -1,78 +1,134 @@
 import React, { useState } from 'react'
 import './index.css'
-import headerImg from './assets/header.png'
 import newsData from './data/news.json'
+
+const categoryEmoji = {
+  'Geopolítica': '🌍',
+  'I.A.': '🤖',
+  'Mistérios': '🔮',
+  'Dopamina': '⚡',
+  default: '📰'
+}
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Todas')
   const [selectedArticle, setSelectedArticle] = useState(null)
 
-  const safeNewsData = Array.isArray(newsData) ? newsData : [];
-  const categories = ['Todas', ...new Set(safeNewsData.map(item => item?.category).filter(Boolean))]
+  const safeNews = Array.isArray(newsData) ? newsData : []
+  const categories = ['Todas', ...new Set(safeNews.map(i => i?.category).filter(Boolean))]
 
-  const filteredNews = safeNewsData.filter(item => {
-    const matchesSearch = item.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          item.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === 'Todas' || item.category === selectedCategory
-    return matchesSearch && matchesCategory
+  const filtered = safeNews.filter(item => {
+    const q = searchTerm.toLowerCase()
+    const matchSearch = !q || item.title?.toLowerCase().includes(q) || item.excerpt?.toLowerCase().includes(q)
+    const matchCat = selectedCategory === 'Todas' || item.category === selectedCategory
+    return matchSearch && matchCat
   })
+
+  const featured = filtered[0]
+  const rest = filtered.slice(1)
+
+  const closeModal = () => setSelectedArticle(null)
 
   return (
     <div className="app-container">
-      <header className="glass" style={{ padding: '20px 0', position: 'sticky', top: 0, zIndex: 100 }}>
-        <main style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="brand" style={{ fontSize: '24px', letterSpacing: '1px', background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            AI NEWS PORTAL
+
+      {/* ── Header ── */}
+      <header className="header">
+        <div className="container header-inner">
+          <div className="brand">AI<span className="brand-dot">.</span>NEWS</div>
+          <div className="header-meta">
+            Última atualização: <span>{safeNews[0]?.date || 'Hoje'}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)', borderRight: '1px solid var(--border-glass)', paddingRight: '20px' }}>
-              Última atualização: <span style={{ color: 'var(--accent-cyan)' }}>{safeNewsData[0]?.date || 'Hoje'}</span>
-            </div>
-            <nav>
-              <ul style={{ display: 'flex', listStyle: 'none', gap: '20px', fontSize: '14px', fontWeight: 500 }}>
-                {['Home', 'Geopolítica', 'I.A.', 'Mistérios'].map(cat => (
-                  <li key={cat} style={{ cursor: 'pointer', color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = 'white'} onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}>{cat}</li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-        </main>
+          <nav>
+            <ul className="nav-list">
+              {['Home', 'Geopolítica', 'I.A.', 'Mistérios', 'Dopamina'].map(item => (
+                <li
+                  key={item}
+                  className="nav-item"
+                  onClick={() => setSelectedCategory(item === 'Home' ? 'Todas' : item)}
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </header>
 
-      <section className="hero" style={{ height: '400px', backgroundImage: `url(${headerImg})`, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '40px' }}>
-        <div className="glass" style={{ padding: '40px', borderRadius: '16px', maxWidth: '800px', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '48px', marginBottom: '16px' }}>O Futuro <span style={{ color: 'var(--accent-purple)' }}>Decodificado.</span>Notícias que Viciam.</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '18px' }}>Geopolítica, I.A. e os Mistérios que ninguém te conta. Curadoria ultra-rápida por Inteligência Artificial.</p>
+      {/* ── Hero ── */}
+      <section className="hero">
+        <div className="container">
+          <div className="hero-eyebrow">⚡ ALIMENTADO POR IA</div>
+          <h1 className="hero-title">
+            O Futuro <span className="highlight">Decodificado.</span><br />
+            Notícias que Viciam.
+          </h1>
+          <p className="hero-sub">
+            Geopolítica, Inteligência Artificial e os Mistérios que ninguém te conta.
+            Curadoria automatizada por IA, atualizada todo dia.
+          </p>
+          <div className="hero-stats">
+            <div>
+              <div className="stat-value">{safeNews.length}</div>
+              <div className="stat-label">Artigos Hoje</div>
+            </div>
+            <div>
+              <div className="stat-value">4</div>
+              <div className="stat-label">Categorias</div>
+            </div>
+            <div>
+              <div className="stat-value">24h</div>
+              <div className="stat-label">Atualização</div>
+            </div>
+            <div>
+              <div className="stat-value">100%</div>
+              <div className="stat-label">Gerado por IA</div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <main>
-        <div className="filters" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', gap: '20px', flexWrap: 'wrap' }}>
-          <div className="search-bar" style={{ flex: 1, minWidth: '300px' }}>
-            <input 
-              type="text" 
-              placeholder="Pesquisar notícias..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="glass"
-              style={{ width: '100%', padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border-glass)', color: 'white', outline: 'none' }}
-            />
-          </div>
-          <div className="category-filters" style={{ display: 'flex', gap: '10px' }}>
+      {/* ── Main content ── */}
+      <main className="container">
+
+        {/* ── Featured article ── */}
+        {featured && searchTerm === '' && (
+          <section className="featured-section">
+            <div className="section-label">🔥 DESTAQUE DO DIA</div>
+            <div className="featured-card" onClick={() => setSelectedArticle(featured)}>
+              <div className="featured-card-inner">
+                <div>
+                  <div className="featured-badge">{featured.category}</div>
+                  <h2 className="featured-title">{featured.title}</h2>
+                  <p className="featured-excerpt">{featured.excerpt}</p>
+                  <button className="featured-read-btn">
+                    Ler artigo completo <span>→</span>
+                  </button>
+                </div>
+                <div className="featured-icon" aria-hidden="true">
+                  {categoryEmoji[featured.category] || categoryEmoji.default}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Filters ── */}
+        <div className="filters-bar">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="🔍  Pesquisar notícias..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+          <div className="cat-buttons">
             {categories.map(cat => (
-              <button 
+              <button
                 key={cat}
+                className={`cat-btn ${selectedCategory === cat ? 'active' : ''}`}
                 onClick={() => setSelectedCategory(cat)}
-                className={selectedCategory === cat ? 'btn-primary' : 'glass'}
-                style={{ 
-                  padding: '8px 16px', 
-                  borderRadius: '8px', 
-                  fontSize: '13px', 
-                  cursor: 'pointer',
-                  border: selectedCategory === cat ? 'none' : '1px solid var(--border-glass)',
-                  color: 'white'
-                }}
               >
                 {cat}
               </button>
@@ -80,55 +136,69 @@ function App() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '30px' }}>
-          {filteredNews.length > 0 ? filteredNews.map(item => (
-            <div key={item.id} className="glow-card" style={{ padding: '24px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--accent-purple)', textTransform: 'uppercase', marginBottom: '12px', display: 'block' }}>{item.category}</span>
-              <h3 style={{ fontSize: '22px', marginBottom: '12px', lineHeight: '1.4' }}>{item.title}</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '20px' }}>{item.excerpt}</p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>
-                <span>{item.date}</span>
-                <button 
-                  className="btn-primary" 
-                  style={{ padding: '6px 16px', fontSize: '12px' }}
-                  onClick={() => setSelectedArticle(item)}
-                >
-                  Ler mais
-                </button>
-              </div>
+        {/* ── News grid ── */}
+        <div className="section-label">
+          {selectedCategory === 'Todas' ? '📰 TODAS AS NOTÍCIAS' : `${categoryEmoji[selectedCategory] || '📰'} ${selectedCategory.toUpperCase()}`}
+        </div>
+        <div className="news-grid">
+          {(searchTerm !== '' ? filtered : rest).length > 0 ? (
+            (searchTerm !== '' ? filtered : rest).map(item => (
+              <article key={item.id} className="news-card" onClick={() => setSelectedArticle(item)}>
+                <span className="card-category">{item.category}</span>
+                <h3 className="card-title">{item.title}</h3>
+                <p className="card-excerpt">{item.excerpt}</p>
+                <div className="card-footer">
+                  <span className="card-date">{item.date}</span>
+                  <button className="card-btn">Ler mais →</button>
+                </div>
+              </article>
+            ))
+          ) : (
+            <div className="empty-state">
+              <div className="empty-state-icon">🔍</div>
+              <p>Nenhuma notícia encontrada.<br />Tente outro termo ou categoria.</p>
             </div>
-          )) : (
-            <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>Nenhuma notícia encontrada para essa busca.</p>
           )}
         </div>
       </main>
 
-      {/* Article Detail Modal */}
+      {/* ── Article Modal ── */}
       {selectedArticle && (
-        <div className="modal-overlay" onClick={() => setSelectedArticle(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
-          <div className="glass modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '800px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '40px', borderRadius: '24px', border: '1px solid var(--border-glass)', boxShadow: '0 0 50px rgba(112, 0, 255, 0.2)' }}>
-            <button onClick={() => setSelectedArticle(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' }}>&times;</button>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--accent-purple)', textTransform: 'uppercase', marginBottom: '20px', display: 'block' }}>{selectedArticle.category}</span>
-            <h2 style={{ fontSize: '36px', marginBottom: '24px', lineHeight: '1.2' }}>{selectedArticle.title}</h2>
-            <div style={{ fontSize: '18px', lineHeight: '1.8', color: 'var(--text-main)', opacity: 0.9 }}>
-              {selectedArticle.content ? selectedArticle.content.split('\n').map((para, i) => (
-                <p key={i} style={{ marginBottom: '20px' }}>{para}</p>
-              )) : selectedArticle.excerpt}
+        <div className="modal-backdrop" onClick={closeModal}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal}>×</button>
+            <div className="modal-category">
+              {categoryEmoji[selectedArticle.category]} {selectedArticle.category}
             </div>
-            <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '14px' }}>
-              <span>Data: {selectedArticle.date}</span>
-              <span>© AI News Portal</span>
+            <h2 className="modal-title">{selectedArticle.title}</h2>
+            <span className="modal-date">Publicado em {selectedArticle.date}</span>
+            <div className="modal-divider" />
+            <div className="modal-body">
+              {selectedArticle.content
+                ? selectedArticle.content.split('\n').filter(Boolean).map((p, i) => <p key={i}>{p}</p>)
+                : <p>{selectedArticle.excerpt}</p>
+              }
+            </div>
+            <div className="modal-footer">
+              <span>© AI News Portal — Gerado por Inteligência Artificial</span>
+              <button className="cat-btn" onClick={closeModal}>Fechar</button>
             </div>
           </div>
         </div>
       )}
 
-      <footer style={{ marginTop: '100px', padding: '60px 0', borderTop: '1px solid var(--border-glass)', textAlign: 'center' }}>
-        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>&copy; 2026 AI News Portal. Criado com IA para o futuro.</p>
+      {/* ── Footer ── */}
+      <footer className="footer">
+        <div className="container">
+          <div className="footer-logo">AI.NEWS PORTAL</div>
+          <p className="footer-sub">
+            Notícias do futuro, hoje. Gerado e curado por Inteligência Artificial.
+          </p>
+        </div>
       </footer>
+
     </div>
   )
 }
-
 
 export default App

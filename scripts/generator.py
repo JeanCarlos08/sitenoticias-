@@ -12,8 +12,8 @@ NEWS_API_KEY    = os.getenv("NEWS_API_KEY")
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "..", "src", "data", "news.json")
-MAX_ARTICLES = 100   # Limite máximo acumulado no JSON
-ARTICLES_PER_CYCLE = 30
+MAX_ARTICLES = 150   # Limite máximo acumulado no JSON
+ARTICLES_PER_CYCLE = 50
 
 WAR_CATEGORIES = ["Conflitos", "OTAN", "Oriente Médio", "Leste Europeu", "Geopolítica", "Ásia-Pacífico", "África"]
 
@@ -205,6 +205,19 @@ def fetch_youtube_video(query):
 
 # ── AI REWRITE ─────────────────────────────────────────────────────────────────
 
+def clean_json_string(text):
+    """Remove markdown backticks (```json ... ```) or any leading/trailing text from AI response"""
+    if "```" in text:
+        # Tenta extrair entre blocos de código
+        try:
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        except:
+            pass
+    return text.strip()
+
+
 def rewrite_as_intel_report(news_item):
     """Usa Groq Llama3 para gerar um Relatório de Inteligência completo"""
     if not GROQ_API_KEY:
@@ -243,9 +256,13 @@ REGRAS:
         resp = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
-            json=payload, timeout=30
+            json=payload, timeout=35
         )
-        return resp.json()["choices"][0]["message"]["content"]
+        data = resp.json()
+        if "choices" not in data:
+            print(f"  [Groq] Resposta inesperada: {data}")
+            return None
+        return clean_json_string(data["choices"][0]["message"]["content"])
     except Exception as e:
         print(f"  [Groq] Erro: {e}")
         return None

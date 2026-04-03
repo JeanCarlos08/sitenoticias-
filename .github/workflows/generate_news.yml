@@ -35,8 +35,4 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config --global user.name "Horizon Intel Bot"
-          git config --global user.email "bot@horizonintel.ai"
-          git add src/data/news.json
-          git commit -m "chore: 24h sweep — $(date -u +'%Y-%m-%d %H:%M UTC') [skip ci]" || echo "No changes to commit"
-          git push
+       

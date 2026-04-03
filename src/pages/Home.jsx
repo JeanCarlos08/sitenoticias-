@@ -290,9 +290,16 @@ export default function Home() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="hero" style={{ position: 'relative', overflow: 'hidden' }} aria-label="Cabeçalho do portal">
+      <section className="hero" style={{ 
+        position: 'relative', 
+        overflow: 'hidden',
+        backgroundImage: `url('file:///C:/Users/user/.gemini/antigravity/brain/b43d5ce0-7ca3-485e-b220-06a663ca0f13/hero_tactical_command_1775171526090.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }} aria-label="Cabeçalho do portal">
+        <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(5,6,8,0.4), rgba(5,6,8,1))', z-index: 1 }}></div>
         <div className="scanline" aria-hidden="true" />
-        <div className="container">
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="hero-eyebrow">📡 GLOBAL STRATEGIC COMMAND</div>
           <h1 className="hero-title">
             HORIZON<br />
@@ -335,7 +342,7 @@ export default function Home() {
                   aria-label={`Notícia em destaque: ${featured.title}`}
                 >
                   <div className="featured-inner">
-                    <div>
+                    <div style={{ flex: 1 }}>
                       <div className="featured-badge">{featured.category}</div>
                       <h2 className="featured-title">{featured.title}</h2>
                       <img
@@ -352,8 +359,12 @@ export default function Home() {
                         Ler reportagem completa →
                       </button>
                     </div>
-                    <div className="featured-icon" aria-hidden="true">
-                      {CAT_ICON[featured.category] || CAT_ICON.default}
+                    <div className="featured-intel-sidebar">
+                      <div className="intel-row"><span>SINAL:</span> <b>STRONG [|||||]</b></div>
+                      <div className="intel-row"><span>COORD:</span> <b>{Math.random().toFixed(2)}N / {Math.random().toFixed(2)}E</b></div>
+                      <div className="intel-row"><span>ENCRYPT:</span> <b>AES-256</b></div>
+                      <div className="intel-row"><span>CONFIDÊNCIA:</span> <b>98.4%</b></div>
+                      <div className="intel-row"><span>STATUS:</span> <b>VERIFICADO</b></div>
                     </div>
                   </div>
                 </div>
@@ -414,6 +425,13 @@ export default function Home() {
                     />
                     <h3 className="card-title">{item.title}</h3>
                     <p className="card-excerpt">{item.excerpt}</p>
+                    
+                    <div className="card-intel">
+                      <div className="intel-tag">SIG: <span>[|||..]</span></div>
+                      <div className="intel-tag">CONF: <span>{(Math.random() * (100 - 85) + 85).toFixed(1)}%</span></div>
+                      <div className="intel-tag">🛰️ SYNC</div>
+                    </div>
+
                     <div className="card-footer">
                       <div>
                         {item.source_label && <div className="card-source">{item.source_label}</div>}

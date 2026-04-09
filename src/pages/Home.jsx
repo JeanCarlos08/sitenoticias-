@@ -293,11 +293,11 @@ export default function Home() {
       <section className="hero" style={{ 
         position: 'relative', 
         overflow: 'hidden',
-        backgroundImage: `url('file:///C:/Users/user/.gemini/antigravity/brain/b43d5ce0-7ca3-485e-b220-06a663ca0f13/hero_tactical_command_1775171526090.png')`,
+        backgroundImage: `url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }} aria-label="Cabeçalho do portal">
-        <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(5,6,8,0.4), rgba(5,6,8,1))', z-index: 1 }}></div>
+        <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(5,6,8,0.4), rgba(5,6,8,1))', zIndex: 1 }}></div>
         <div className="scanline" aria-hidden="true" />
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="hero-eyebrow">📡 GLOBAL STRATEGIC COMMAND</div>

@@ -49,7 +49,35 @@ const isNew = (article) => {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-const AdSlot = () => <div className="ad-slot" aria-hidden="true" />
+const AdSlot = ({ label }) => (
+  <div className="ad-slot" aria-hidden="true" role="complementary">
+    {label && <span style={{ position: 'absolute', top: 10, left: 14 }}>{label}</span>}
+    {/* Onde entraria o script do AdSense/Ezoic */}
+    <div style={{ opacity: 0.5 }}>[ ESPAÇO PARA PUBLICIDADE E PARCERIAS ]</div>
+  </div>
+)
+
+const AffiliateSection = () => (
+  <div className="affiliate-section">
+    <div className="affiliate-title">🛰️ FONTES & EQUIPAMENTOS RECOMENDADOS</div>
+    <div className="affiliate-grid">
+      <a href="https://nordvpn.com" target="_blank" rel="noreferrer" className="affiliate-item">
+        <span className="affiliate-icon">🛡️</span>
+        <div className="affiliate-text">
+          <div>NordVPN — Segurança OSINT</div>
+          <span>Proteja seu tráfego de inteligência.</span>
+        </div>
+      </a>
+      <a href="https://amazon.com" target="_blank" rel="noreferrer" className="affiliate-item">
+        <span className="affiliate-icon">📚</span>
+        <div className="affiliate-text">
+          <div>Geopolítica: Livro Essencial</div>
+          <span>Análise clássica atualizada.</span>
+        </div>
+      </a>
+    </div>
+  </div>
+)
 
 const VideoGallery = ({ items, onSelect }) => {
   const videoItems = items.filter(i => i.youtube_id && i.youtube_id !== '').slice(0, 8)
@@ -186,14 +214,25 @@ const ArticleModal = ({ article, onClose }) => {
             : <p>{article.excerpt}</p>}
 
           {article.strategic_analysis && (
-            <div className="analysis-block" aria-label="Análise estratégica">
+            <div className={`analysis-block ${article.is_premium ? 'premium-blur-container' : ''}`} aria-label="Análise estratégica">
               <div className="analysis-title">📊 ANÁLISE ESTRATÉGICA</div>
-              <p className="analysis-text">{article.strategic_analysis}</p>
+              <div className={article.is_premium ? 'premium-blur' : ''}>
+                <p className="analysis-text">{article.strategic_analysis}</p>
+              </div>
+              
+              {article.is_premium && (
+                <div className="paywall-overlay">
+                  <div className="paywall-title">CONTEÚDO CLASSIFICADO</div>
+                  <div className="paywall-text">Esta análise técnica profunda é exclusiva para assinantes do Horizon Intel Premium.</div>
+                  <button className="btn-war" onClick={() => window.location.hash = 'newsletter'}>DESBLOQUEAR ACESSO RELATÓRIOS →</button>
+                </div>
+              )}
             </div>
           )}
-          <AdSlot />
+          <AdSlot label="INNER REPORT AD" />
         </div>
 
+        <AffiliateSection />
         <SocialShare article={article} />
 
         <div className="modal-footer">
@@ -212,6 +251,7 @@ export default function Home() {
   const [category, setCategory] = useState('Todas')
   const [article,  setArticle]  = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(7) // 1 featured + 6 rest initially
   const audioRef = useRef(null)
 
   const toggleAudio = () => {
@@ -243,12 +283,16 @@ export default function Home() {
     <div className="app-container">
 
       {/* ── Breaking news ticker ── */}
-      <div className="ticker" aria-label="Breaking news ticker" role="marquee">
+      <div className="ticker" aria-label="Breaking news ticker" role="marquee" id="newsletter">
         <span className="ticker-inner">
           {[...TICKER_TOPICS, ...TICKER_TOPICS].map((t, i) => (
             <span key={i} style={{ marginRight: '80px' }}>🔴 {t}</span>
           ))}
         </span>
+      </div>
+
+      <div className="container" style={{ marginTop: '20px' }}>
+        <AdSlot label="TOP LEADERBOARD PARTNER" />
       </div>
 
       {/* ── Header ── */}
@@ -324,7 +368,7 @@ export default function Home() {
           <div className="content-area">
 
             {/* ── Intelligence Radar ── */}
-            <IntelRadar onFilter={handleRadarFilter} />
+            <IntelRadar onFilter={handleRadarFilter} newsData={data} />
 
             {/* ── Video Gallery ── */}
             <VideoGallery items={data} onSelect={setArticle} />
@@ -361,9 +405,9 @@ export default function Home() {
                     </div>
                     <div className="featured-intel-sidebar">
                       <div className="intel-row"><span>SINAL:</span> <b>STRONG [|||||]</b></div>
-                      <div className="intel-row"><span>COORD:</span> <b>{Math.random().toFixed(2)}N / {Math.random().toFixed(2)}E</b></div>
+                      <div className="intel-row"><span>COORD:</span> <b>{((featured.id || 1) % 90).toFixed(2)}N / {((featured.id || 1) % 180).toFixed(2)}E</b></div>
                       <div className="intel-row"><span>ENCRYPT:</span> <b>AES-256</b></div>
-                      <div className="intel-row"><span>CONFIDÊNCIA:</span> <b>98.4%</b></div>
+                      <div className="intel-row"><span>CONFIANÇA:</span> <b>{featured.confidence_score || 97}%</b></div>
                       <div className="intel-row"><span>STATUS:</span> <b>VERIFICADO</b></div>
                     </div>
                   </div>
@@ -401,7 +445,7 @@ export default function Home() {
               {category === 'Todas' ? '📡 TODAS AS REPORTAGENS' : `${CAT_ICON[category] || '📡'} ${category.toUpperCase()}`}
             </div>
             <div className="news-grid" role="list" aria-label="Lista de notícias">
-              {filtered.length > 0 ? rest.map((item, index) => (
+              {filtered.length > 0 ? rest.slice(0, visibleCount - 1).map((item, index) => (
                 <React.Fragment key={item.id ?? index}>
                   {index > 0 && index % 4 === 0 && <AdSlot />}
                   <article
@@ -414,7 +458,11 @@ export default function Home() {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span className="card-category">{CAT_ICON[item.category]} {item.category}</span>
-                      {isNew(item) && <span className="badge-new" aria-label="Notícia nova">🔴 NOVO</span>}
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        {item.is_premium && <span className="badge-premium">CLASSIFIED</span>}
+                        {item.is_sponsored && <span className="badge-sponsored">SPONSORED</span>}
+                        {isNew(item) && <span className="badge-new" aria-label="Notícia nova">🔴 NOVO</span>}
+                      </div>
                     </div>
                     <img
                       src={getImageUrl(item)}
@@ -428,8 +476,8 @@ export default function Home() {
                     
                     <div className="card-intel">
                       <div className="intel-tag">SIG: <span>[|||..]</span></div>
-                      <div className="intel-tag">CONF: <span>{(Math.random() * (100 - 85) + 85).toFixed(1)}%</span></div>
-                      <div className="intel-tag">🛰️ SYNC</div>
+                      <div className="intel-tag">CONF: <span>{item.confidence_score ? `${item.confidence_score}%` : '—'}</span></div>
+                      <div className="intel-tag">{item.threat_level || '🟡 MOD'}</div>
                     </div>
 
                     <div className="card-footer">
@@ -448,6 +496,18 @@ export default function Home() {
                 </div>
               )}
             </div>
+
+            {filtered.length > visibleCount && (
+              <div style={{ textAlign: 'center', margin: '40px 0' }}>
+                <button 
+                  className="btn-war" 
+                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  style={{ background: 'transparent', border: '1px solid var(--red)', color: 'var(--red)' }}
+                >
+                  CARREGAR MAIS RELATÓRIOS ⚔️
+                </button>
+              </div>
+            )}
 
             <Newsletter />
           </div>

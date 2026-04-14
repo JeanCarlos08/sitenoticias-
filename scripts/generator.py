@@ -3,6 +3,7 @@ import json
 import random
 import hashlib
 import requests
+import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from urllib.parse import quote
@@ -12,8 +13,8 @@ NEWS_API_KEY    = os.getenv("NEWS_API_KEY")
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "..", "src", "data", "news.json")
-MAX_ARTICLES       = 200   # Aumentado — acumula mais conteúdo
-ARTICLES_PER_CYCLE = 60    # Mais artigos por ciclo
+MAX_ARTICLES       = 200   # Acumula conteúdo progressivamente
+ARTICLES_PER_CYCLE = 15    # Por ciclo — 8 ciclos/dia = 120 relatórios diários
 
 WAR_CATEGORIES = ["Conflitos", "OTAN", "Oriente Médio", "Leste Europeu", "Geopolítica", "Ásia-Pacífico", "África"]
 
@@ -245,14 +246,26 @@ def fetch_youtube_video(query):
 # ── AI REWRITE (PROMPT APRIMORADO) ────────────────────────────────────────────
 
 def clean_json_string(text):
-    """Remove markdown backticks ou texto extra da resposta da IA"""
+    """Remove markdown backticks ou texto extra da resposta da IA — parser robusto"""
+    if not text:
+        return ""
+    # Tenta extrair JSON entre ``` ... ```
     if "```" in text:
         try:
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        except:
+            parts = text.split("```")
+            for part in parts:
+                candidate = part.strip()
+                if candidate.startswith("json"):
+                    candidate = candidate[4:].strip()
+                if candidate.startswith("{"):
+                    return candidate
+        except Exception:
             pass
+    # Tenta achar o primeiro { e o último }
+    start = text.find("{")
+    end   = text.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        return text[start:end + 1].strip()
     return text.strip()
 
 
@@ -399,6 +412,10 @@ def main():
     new_articles = []
     now_utc = datetime.now(timezone.utc)
 
+    ok_count  = 0
+    err_count = 0
+    t_start   = time.time()
+
     for i, raw in enumerate(selected, 1):
         print(f"  [{i:02d}/{len(selected)}] 📄 {raw['title'][:70]}...")
         result_json = rewrite_as_intel_report(raw)
@@ -432,12 +449,19 @@ def main():
                 article["youtube_id"] = fetch_youtube_video(article.get("title", raw["title"]))
 
             new_articles.append(article)
+            ok_count += 1
             threat = article.get("threat_level", "?")
             conf   = article.get("confidence_score", "?")
-            print(f"          ✅ [{threat}] Confiança: {conf}% — {article.get('title','')[:55]}")
+            elapsed = time.time() - t_start
+            print(f"          ✅ [{threat}] Conf: {conf}% | Tempo: {elapsed:.0f}s — {article.get('title','')[:45]}")
 
         except Exception as e:
+            err_count += 1
             print(f"          ❌ Erro ao processar: {e}")
+
+        # Delay entre chamadas para evitar rate limit da Groq
+        if i < len(selected):
+            time.sleep(1.5)
 
     # 5. Combinar e limitar
     combined = new_articles + existing_articles
@@ -456,11 +480,14 @@ def main():
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(final_articles, f, ensure_ascii=False, indent=2)
 
+    total_time = time.time() - t_start
     print(f"\n{'='*60}")
-    print(f"  🎯 CICLO ULTRA CONCLUÍDO")
-    print(f"  📰 Novos relatórios gerados: {len(new_articles)}")
-    print(f"  📂 Total acumulado no JSON: {len(final_articles)}")
-    print(f"  💾 Salvo em: {OUTPUT_PATH}")
+    print(f"  🎯 CICLO CONCLUÍDO")
+    print(f"  ✅ Relatórios gerados:   {ok_count}")
+    print(f"  ❌ Erros de parsing:     {err_count}")
+    print(f"  📂 Total no JSON:        {len(final_articles)}")
+    print(f"  ⏱️  Tempo total:          {total_time:.0f}s ({total_time/60:.1f} min)")
+    print(f"  💾 Salvo em:             {OUTPUT_PATH}")
     print(f"{'='*60}\n")
 
 

@@ -1,0 +1,4 @@
+# ads.txt — HORIZON INTEL
+# Adicione suas informações de publicador abaixo para validar seu domínio no Google AdSense e outras redes.
+# Exemplo Google:
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

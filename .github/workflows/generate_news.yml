@@ -1,4 +1,4 @@
-name: Generate 24h News — HORIZON INTEL ULTRA
+name: Generate News — HORIZON INTEL
 
 on:
   schedule:
@@ -9,12 +9,23 @@ on:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30   # Aumentado — Llama3-70b gera relatórios mais longos
+    timeout-minutes: 20   # 15 artigos × ~45s/artigo ≈ 12 min. 20min é margem segura.
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Histórico completo para evitar conflitos de push
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.GROQ_API_KEY }}" ]; then
+            echo "❌ ERRO: Secret GROQ_API_KEY não está configurado no repositório."
+            echo "Acesse Settings → Secrets → Actions e adicione a chave."
+            exit 1
+          fi
+          echo "✅ GROQ_API_KEY detectado. Iniciando ciclo de geração..."
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,7 +36,7 @@ jobs:
         run: |
           pip install requests
 
-      - name: Run news generator (ULTRA Sweep — 35+ RSS, Llama3-70b)
+      - name: Run news generator (15 artigos × Llama3-70b)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
@@ -38,6 +49,7 @@ jobs:
         run: |
           git config --global user.name "Horizon Intel Bot"
           git config --global user.email "bot@horizonintel.ai"
+          git pull --rebase origin main || git pull --rebase origin master
           git add src/data/news.json
-          git commit -m "chore: ULTRA sweep — $(date -u +'%Y-%m-%d %H:%M UTC') [auto]" || echo "No changes to commit"
+          git commit -m "chore: sweep $(date -u +'%Y-%m-%d %H:%M UTC') — 15 novos relatórios [auto]" || echo "Nenhuma alteração para commitar"
           git push

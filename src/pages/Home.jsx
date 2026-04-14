@@ -135,6 +135,43 @@ const LiveFeed = ({ data }) => (
   </div>
 )
 
+const ThreatMeter = ({ data }) => {
+  const levels = { '🟢 BAIXO': 20, '🟡 MODERADO': 50, '🟠 ELEVADO': 75, '🔴 CRÍTICO': 95, '—': 10 }
+  const avg = data.length > 0 
+    ? data.reduce((acc, curr) => acc + (levels[curr.threat_level] || 10), 0) / data.length 
+    : 10
+  
+  return (
+    <div className="threat-meter-box" aria-label="Medidor de Tensão Global">
+      <div className="meter-label">GLOBAL THREAT LEVEL</div>
+      <div className="meter-container">
+        <div className="meter-fill" style={{ width: `${avg}%`, backgroundColor: avg > 70 ? 'var(--red)' : avg > 40 ? '#f59e0b' : 'var(--cyan)' }} />
+      </div>
+      <div className="meter-status">{avg > 70 ? 'CRITICAL' : avg > 40 ? 'ELEVATED' : 'STABLE'} — {avg.toFixed(0)}% OPS_INTEL</div>
+    </div>
+  )
+}
+
+const LiveTerminal = () => {
+  const logs = [
+    "INTERCEPTING ENCRYPTED SIGNAL...", "DECODING PACKET 0x4F23...", "OSINT FEED: ACTIVE", "SATELLITE SYNC: 98%",
+    "GEO-TARGETING: SECTOR 7...", "DETECTING ANOMALIES...", "SIGNAL STRENGTH: OPTIMAL", "ENCRYPTION: AES-256"
+  ]
+  const [current, setCurrent] = useState(0)
+  
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrent(prev => (prev + 1) % logs.length), 3000)
+    return () => clearInterval(timer)
+  }, [])
+
+  return (
+    <div className="live-terminal">
+      <span className="terminal-prefix">INTEL_LOG ></span>
+      <span className="terminal-text">{logs[current]}</span>
+    </div>
+  )
+}
+
 const Newsletter = () => (
   <section className="newsletter-section" aria-label="Inscreva-se na newsletter">
     <div className="hero-eyebrow">📬 INTELIGÊNCIA DIÁRIA</div>
@@ -250,9 +287,19 @@ export default function Home() {
   const [search,   setSearch]   = useState('')
   const [category, setCategory] = useState('Todas')
   const [article,  setArticle]  = useState(null)
+  const [isScanning, setIsScanning] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [visibleCount, setVisibleCount] = useState(7) // 1 featured + 6 rest initially
+  const [visibleCount, setVisibleCount] = useState(7)
   const audioRef = useRef(null)
+
+  const handleSetArticle = (art) => {
+    if (!art) { setArticle(null); return }
+    setIsScanning(true)
+    setTimeout(() => {
+      setArticle(art)
+      setIsScanning(false)
+    }, 800)
+  }
 
   const toggleAudio = () => {
     if (!audioRef.current) return
@@ -359,6 +406,7 @@ export default function Home() {
             <div><div className="stat-val">4×</div><div className="stat-lbl">Refresh Diário</div></div>
             <div><div className="stat-val" style={{ color: 'var(--accent)' }}>ACTIVE</div><div className="stat-lbl">Status</div></div>
           </div>
+          <ThreatMeter data={data} />
         </div>
       </section>
 
@@ -371,7 +419,7 @@ export default function Home() {
             <IntelRadar onFilter={handleRadarFilter} newsData={data} />
 
             {/* ── Video Gallery ── */}
-            <VideoGallery items={data} onSelect={setArticle} />
+            <VideoGallery items={data} onSelect={handleSetArticle} />
 
             {/* ── Featured ── */}
             {featured && !search && (
@@ -379,8 +427,8 @@ export default function Home() {
                 <div className="section-label">🔥 ÚLTIMA HORA</div>
                 <div
                   className="featured-card"
-                  onClick={() => setArticle(featured)}
-                  onKeyDown={e => e.key === 'Enter' && setArticle(featured)}
+                  onClick={() => handleSetArticle(featured)}
+                  onKeyDown={e => e.key === 'Enter' && handleSetArticle(featured)}
                   tabIndex={0}
                   role="article"
                   aria-label={`Notícia em destaque: ${featured.title}`}
@@ -450,8 +498,8 @@ export default function Home() {
                   {index > 0 && index % 4 === 0 && <AdSlot />}
                   <article
                     className="news-card"
-                    onClick={() => setArticle(item)}
-                    onKeyDown={e => e.key === 'Enter' && setArticle(item)}
+                    onClick={() => handleSetArticle(item)}
+                    onKeyDown={e => e.key === 'Enter' && handleSetArticle(item)}
                     tabIndex={0}
                     role="listitem"
                     aria-label={`Notícia: ${item.title}`}
@@ -541,6 +589,16 @@ export default function Home() {
           <p className="footer-copy">© {new Date().getFullYear()} HORIZON INTEL. Todos os direitos reservados.</p>
         </div>
       </footer>
+
+      <LiveTerminal />
+
+      {/* ── Scanning Overlay ── */}
+      {isScanning && (
+        <div className="scanning-overlay">
+          <div className="scanning-text">DATA_BURST_SCANNING...</div>
+          <div className="scanning-progress" />
+        </div>
+      )}
     </div>
   )
 }

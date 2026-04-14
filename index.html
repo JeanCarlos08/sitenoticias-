@@ -5,30 +5,95 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- SEO Primary -->
-    <title>HORIZON INTEL | Geopolítica & Inteligência Estratégica Global</title>
+    <!-- ── SEO Primary ──────────────────────────────────────────────────── -->
+    <title>HORIZON INTEL | Geopolítica &amp; Inteligência Estratégica Global</title>
     <meta name="description" content="Portal de inteligência geopolítica: cobertura automatizada por IA de conflitos globais, OTAN, Oriente Médio, Leste Europeu e Indo-Pacífico em tempo real." />
-    <meta name="keywords" content="geopolítica, conflitos, OTAN, Ucrânia, Gaza, Taiwan, inteligência, defesa, guerra, notícias militares" />
+    <meta name="keywords" content="geopolítica, conflitos, OTAN, Ucrânia, Gaza, Taiwan, inteligência, defesa, guerra, notícias militares, OSINT" />
     <meta name="author" content="HORIZON INTEL" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://horizonintel.vercel.app/" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
-    <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <!-- Google Search Console — cole aqui o meta de verificação quando receber -->
+
+    <!-- ── Open Graph (Facebook, WhatsApp, LinkedIn) ───────────────────── -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="HORIZON INTEL" />
-    <meta property="og:title" content="HORIZON INTEL — Inteligência Geopolítica & Conflitos Globais" />
+    <meta property="og:title" content="HORIZON INTEL — Inteligência Geopolítica &amp; Conflitos Globais" />
     <meta property="og:description" content="Monitoramento autônomo de alta precisão. Geopolítica, Defesa e Inteligência processadas em tempo real por IA." />
     <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop" />
-    <meta property="og:url" content="https://horizonintel.ai" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://horizonintel.vercel.app/" />
     <meta property="og:locale" content="pt_BR" />
 
-    <!-- Twitter Card -->
+    <!-- ── Twitter Card ─────────────────────────────────────────────────── -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@horizonintel" />
     <meta name="twitter:title" content="HORIZON INTEL — Geopolítica em Tempo Real" />
     <meta name="twitter:description" content="Monitoramento de conflitos globais por IA. OTAN, Ucrânia, Gaza, Taiwan e mais." />
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop" />
 
-    <!-- Theme & PWA -->
+    <!-- ── Schema.org Structured Data ──────────────────────────────────── -->
+    <!-- Isso faz o Google mostrar o site em destaque nos resultados de notícias -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsMediaOrganization",
+      "name": "HORIZON INTEL",
+      "url": "https://horizonintel.vercel.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=512&auto=format&fit=crop"
+      },
+      "description": "Portal de inteligência geopolítica automatizado por IA.",
+      "inLanguage": "pt-BR",
+      "sameAs": []
+    }
+    </script>
+
+    <!-- ── PWA / Theme ───────────────────────────────────────────────────── -->
     <meta name="theme-color" content="#0ea5e9" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- ── OneSignal Push Notifications ─────────────────────────────────── -->
+    <!-- INSTRUÇÕES:
+         1. Crie conta GRATUITA em onesignal.com
+         2. Crie um "Web Push" app — coloque seu domínio Vercel
+         3. Substitua YOUR_ONESIGNAL_APP_ID pelo App ID gerado
+         Isso te permite enviar notificações para todos os visitantes gratuitamente! -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "YOUR_ONESIGNAL_APP_ID",
+          notifyButton: {
+            enable: true,
+            size: 'medium',
+            position: 'bottom-right',
+            text: {
+              'tip.state.unsubscribed': 'Receba alertas de inteligência',
+              'tip.state.subscribed': 'Recebendo alertas HORIZON INTEL',
+              'message.prenotify': 'Clique para receber relatórios em tempo real',
+              'message.action.subscribed': '✅ Ativado! Você receberá alertas táticos.',
+              'dialog.main.title': 'HORIZON INTEL — Alertas Táticos',
+              'dialog.main.button.subscribe': 'ATIVAR ALERTAS',
+              'dialog.main.button.unsubscribe': 'DESATIVAR'
+            },
+            colors: {
+              'circle.background': '#0ea5e9',
+              'circle.foreground': 'white',
+              'badge.background': '#dc2626',
+              'pulse.color': '#0ea5e9',
+              'dialog.button.background': '#0ea5e9',
+              'dialog.button.foreground': 'white'
+            }
+          }
+        });
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

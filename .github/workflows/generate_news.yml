@@ -45,11 +45,16 @@ jobs:
           cd scripts
           python generator.py
 
+      - name: Generate Sitemap (SEO Google News)
+        run: |
+          cd scripts
+          python generate_sitemap.py
+
       - name: Commit and push changes
         run: |
           git config --global user.name "Horizon Intel Bot"
           git config --global user.email "bot@horizonintel.ai"
           git pull --rebase origin main || git pull --rebase origin master
-          git add src/data/news.json
-          git commit -m "chore: sweep $(date -u +'%Y-%m-%d %H:%M UTC') — 15 novos relatórios [auto]" || echo "Nenhuma alteração para commitar"
+          git add src/data/news.json public/sitemap.xml
+          git commit -m "chore: sweep $(date -u +'%Y-%m-%d %H:%M UTC') — 15 novos relatórios + sitemap [auto]" || echo "Nenhuma alteração para commitar"
           git push

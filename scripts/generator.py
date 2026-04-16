@@ -317,6 +317,8 @@ Gere um JSON com EXATAMENTE estas chaves:
 
 8. "category": exatamente "{news_item['category']}"
 
+9. "sentiment": Uma string — APENAS "ESCALADA", "DIPLOMACIA" ou "IMPASSE". Onde ESCALADA é piora do conflito, DIPLOMACIA são tratados/negociação, e IMPASSE é ausência de avanço.
+
 REGRAS ABSOLUTAS:
 - Zero especulação não fundamentada. Zero viés editorial. Zero sensacionalismo.
 - Apenas fatos verificáveis ou declarações de fontes oficiais públicas.
@@ -442,6 +444,8 @@ def main():
                 article["threat_level"] = "🟡 MODERADO"
             if "confidence_score" not in article:
                 article["confidence_score"] = random.randint(85, 97)
+            if "sentiment" not in article:
+                article["sentiment"] = "IMPASSE"
 
             # Buscar vídeo no YouTube (opcional)
             if YOUTUBE_API_KEY:

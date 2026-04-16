@@ -615,3 +615,66 @@ h1,h2,h3,h4,.brand{font-family:var(--display);}
   border-radius: 4px;
 }
 
+/* ── "FAZ TUDO" MEGA UPDATE STYLES ────────────────────────────────────────── */
+
+/* 1. Terminal Mode */
+body.theme-terminal {
+  --red: #00ff00; --red-dark: #00bb00; --red-glow: rgba(0, 255, 0, 0.4);
+  --cyan: #00ff00; --cyan-glow: rgba(0, 255, 0, 0.3);
+  --amber: #00ff00; --amber-glow: rgba(0, 255, 0, 0.2);
+  --bg: #000000; --bg-card: #000000; --bg-glass: rgba(0, 0, 0, 0.9);
+  --border: rgba(0, 255, 0, 0.3); --border-cyan: rgba(0, 255, 0, 0.4);
+  --text: #00ff00; --soft: #00cc00; --muted: #008800;
+  --font: 'Courier New', Courier, monospace; --display: 'Courier New', Courier, monospace;
+}
+body.theme-terminal .scanline { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.05) 2px, rgba(0,255,0,0.05) 4px); }
+body.theme-terminal img, body.theme-terminal video, body.theme-terminal iframe { filter: grayscale(100%) contrast(1.2) sepia(100%) hue-rotate(80deg) blur(0.5px); }
+body.theme-terminal .ad-slot::before { content: "SYS_MSG: ENCRYPTED DATALINK ACTIVE"; color: #0f0; }
+
+/* 2. Macro Ticker */
+.macro-ticker {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px; margin-bottom: 24px;
+}
+.macro-title { font-size: 10px; font-weight: 800; color: var(--muted); letter-spacing: 2px; margin-bottom: 12px; }
+.macro-items { display: flex; flex-direction: column; gap: 10px; }
+.macro-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; padding: 8px; border-radius: 4px; background: rgba(255,255,255,0.03); border: 1px solid transparent; }
+.macro-item.up { border-left: 2px solid #10b981; color: #10b981; }
+.macro-item.down { border-left: 2px solid var(--red); color: var(--red); }
+.macro-label { color: var(--text); }
+.macro-value { display: flex; gap: 8px; align-items: center; }
+.macro-change { font-size: 10px; font-weight: 800; }
+
+/* 3. Daily Briefing */
+.daily-briefing {
+  background: linear-gradient(135deg, rgba(14,165,233,0.05), rgba(0,0,0,0.8));
+  border: 1px solid var(--cyan); border-radius: var(--r); padding: 24px;
+  margin-bottom: 40px; position: relative; overflow: hidden;
+}
+.briefing-title { font-family: var(--display); font-size: 18px; font-weight: 900; color: var(--cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.briefing-content { font-size: 14px; line-height: 1.8; color: var(--text); font-weight: 500; }
+.briefing-glitch { position: absolute; right: -20px; bottom: -20px; font-size: 120px; opacity: 0.03; pointer-events: none; }
+
+/* 4. GeoMap Filter */
+.geo-map-container {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 20px; margin-bottom: 30px;
+  position: relative;
+}
+.geo-map-svg { width: 100%; height: auto; max-height: 300px; display: block; opacity: 0.7; }
+.map-region { fill: rgba(255,255,255,0.05); stroke: var(--border); stroke-width: 1; transition: all 0.3s; cursor: pointer; }
+.map-region:hover { fill: rgba(14,165,233,0.3); stroke: var(--cyan); }
+.map-region.active { fill: var(--red-glow); stroke: var(--red); }
+.map-point { fill: var(--red); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes ping { 75%, 100% { transform: scale(3); opacity: 0; } }
+
+/* 5. Sentiment Tag */
+.badge-sentiment {
+  font-size: 9px; font-weight: 800; border: 1px solid currentColor;
+  padding: 2px 8px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.sentiment-escalada { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+.sentiment-diplomacia { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+.sentiment-impasse { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+

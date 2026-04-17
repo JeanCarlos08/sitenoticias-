@@ -326,36 +326,49 @@ REGRAS ABSOLUTAS DE CREDIBILIDADE JORNALÍSTICA:
 """
 
     payload = {
-        "model": "llama3-70b-8192",   # Upgrade: modelo maior e mais capaz
+        "model": "llama-3.3-70b-versatile",  # Modelo mais recente e capaz da Groq (2025)
         "messages": [
             {
                 "role": "system",
                 "content": (
                     "Você é um analista de inteligência sênior classificação GOLD, "
                     "reconhecido pela precisão, profundidade e imparcialidade. "
-                    "Responde APENAS com JSON válido, sem texto adicional."
+                    "Responde APENAS com JSON válido, sem texto adicional, sem markdown."
                 )
             },
             {"role": "user", "content": prompt}
         ],
         "response_format": {"type": "json_object"},
-        "temperature": 0.25,   # Mais conservador = mais factual
-        "max_tokens": 4096,    # Mais tokens = relatórios mais longos
+        "temperature": 0.2,    # Mais conservador = mais factual
+        "max_tokens": 8192,    # Relatórios mais longos e completos
     }
-    try:
-        resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
-            json=payload, timeout=60   # Timeout maior para respostas longas
-        )
-        data = resp.json()
-        if "choices" not in data:
-            print(f"  [Groq] Resposta inesperada: {data}")
-            return None
-        return clean_json_string(data["choices"][0]["message"]["content"])
-    except Exception as e:
-        print(f"  [Groq] Erro: {e}")
-        return None
+    # Retry automático em caso de rate limit (429) ou erro de servidor (500/503)
+    for attempt in range(3):
+        try:
+            resp = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
+                json=payload, timeout=90
+            )
+            if resp.status_code == 429:
+                wait = 15 * (attempt + 1)
+                print(f"  [Groq] Rate limit — aguardando {wait}s (tentativa {attempt+1}/3)...")
+                time.sleep(wait)
+                continue
+            if resp.status_code in (500, 503):
+                print(f"  [Groq] Erro de servidor {resp.status_code} — tentativa {attempt+1}/3")
+                time.sleep(5)
+                continue
+            data = resp.json()
+            if "choices" not in data:
+                print(f"  [Groq] Resposta inesperada: {data}")
+                return None
+            return clean_json_string(data["choices"][0]["message"]["content"])
+        except Exception as e:
+            print(f"  [Groq] Erro (tentativa {attempt+1}/3): {e}")
+            time.sleep(3)
+    return None
+
 
 
 # ── MAIN ───────────────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import newsData from '../data/news.json'
 import IntelRadar   from '../components/IntelRadar'
@@ -26,6 +26,14 @@ const FALLBACK_IMAGES = {
   'África':         'https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?q=80&w=1200&auto=format&fit=crop',
   default:          'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop',
 }
+
+// ── Config rápida — preencha com seus dados ──────────────────────────────────
+// 1. Crie conta em formspree.io → copie seu Form ID aqui:
+const FORMSPREE_ID = 'SEU_FORM_ID_AQUI'  // ex: 'xbjkwzqp'
+// 2. Crie um canal no Telegram e cole o link:
+const TELEGRAM_URL = 'https://t.me/horizonintel' // Coloque seu canal real
+// 3. Cole aqui sua conta do Google Analytics (GA4):
+const GA_ID = '' // ex: 'G-XXXXXXXXXX' — deixe vazio para desativar
 
 const TICKER_TOPICS = [
   '🚨 BREAKING • Tensões aumentam no Leste Europeu',
@@ -408,28 +416,60 @@ const LiveTerminal = () => {
   )
 }
 
-const Newsletter = () => (
-  <section className="newsletter-section" aria-label="Inscreva-se na newsletter">
-    <div className="hero-eyebrow">📬 INTELIGÊNCIA DIÁRIA</div>
-    <h2 className="news-title">Relatório Warzone</h2>
-    <p className="news-sub">
-      Receba análises profundas e boletins de emergência direto no seu e-mail.
-      Junte-se a 50.000+ assinantes globais.
-    </p>
-    <form className="news-form" onSubmit={e => e.preventDefault()}>
-      <input
-        type="email"
-        placeholder="Seu melhor e-mail..."
-        className="news-input"
-        required
-        aria-label="Digite seu e-mail para se inscrever"
-      />
-      <button type="submit" className="btn-war" aria-label="Inscrever-se na newsletter">
-        INSCREVER-SE
-      </button>
-    </form>
-  </section>
-)
+const Newsletter = () => {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState('idle') // 'idle' | 'loading' | 'ok' | 'error'
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!FORMSPREE_ID || FORMSPREE_ID === 'SEU_FORM_ID_AQUI') {
+      alert('Configure o FORMSPREE_ID no topo do arquivo Home.jsx!')
+      return
+    }
+    setStatus('loading')
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      setStatus(res.ok ? 'ok' : 'error')
+      if (res.ok) setEmail('')
+    } catch { setStatus('error') }
+  }
+
+  return (
+    <section className="newsletter-section" aria-label="Inscreva-se na newsletter">
+      <div className="hero-eyebrow">📬 INTELIGÊNCIA DIÁRIA</div>
+      <h2 className="news-title">Relatório Warzone</h2>
+      <p className="news-sub">
+        Receba análises profundas e boletins de emergência direto no seu e-mail.
+        Junte-se a 50.000+ assinantes globais.
+      </p>
+      {status === 'ok' ? (
+        <div style={{ color: '#10b981', fontWeight: 700, fontSize: '14px', padding: '16px' }}>
+          ✅ Inscrição confirmada! Bem-vindo à rede de inteligência.
+        </div>
+      ) : (
+        <form className="news-form" onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Seu melhor e-mail..."
+            className="news-input"
+            required
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            aria-label="Digite seu e-mail para se inscrever"
+          />
+          <button type="submit" className="btn-war" disabled={status === 'loading'} aria-label="Inscrever-se na newsletter">
+            {status === 'loading' ? 'ENVIANDO...' : 'INSCREVER-SE'}
+          </button>
+          {status === 'error' && <p style={{ color: 'var(--red)', fontSize: '12px', marginTop: '8px' }}>Erro ao inscrever. Tente novamente.</p>}
+        </form>
+      )}
+    </section>
+  )
+}
 
 // ── Modal ──────────────────────────────────────────────────────────────────────
 
@@ -527,7 +567,24 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isTerminal, setIsTerminal] = useState(false)
   const [visibleCount, setVisibleCount] = useState(7)
+  const [saved, setSaved] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('horizonintel_saved') || '[]') } catch { return [] }
+  })
   const audioRef = useRef(null)
+
+  // Google Analytics pageview
+  useEffect(() => {
+    if (GA_ID && window.gtag) window.gtag('event', 'page_view', { page_title: 'Home' })
+  }, [])
+
+  const toggleSave = (e, itemId) => {
+    e.stopPropagation()
+    setSaved(prev => {
+      const next = prev.includes(itemId) ? prev.filter(i => i !== itemId) : [...prev, itemId]
+      localStorage.setItem('horizonintel_saved', JSON.stringify(next))
+      return next
+    })
+  }
 
   React.useEffect(() => {
     if (isTerminal) document.body.classList.add('theme-terminal')
@@ -595,6 +652,16 @@ export default function Home() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div className="live-dot" aria-label="Sinal ativo">SIGNAL: ACTIVE</div>
+            <a
+              href={TELEGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="audio-btn"
+              style={{ textDecoration: 'none', color: '#2aabee', borderColor: '#2aabee' }}
+              aria-label="Canal Telegram Horizon Intel"
+            >
+              ✈️ TELEGRAM
+            </a>
             <button
               className={`audio-btn ${isPlaying ? 'playing' : ''}`}
               onClick={toggleAudio}
@@ -787,7 +854,18 @@ export default function Home() {
                         {item.source_label && <div className="card-source">{item.source_label}</div>}
                         <div className="card-date">{item.date}</div>
                       </div>
-                      <button className="card-btn" aria-label={`Ler análise: ${item.title}`}>Análise →</button>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                          className="card-btn"
+                          onClick={e => toggleSave(e, item.id)}
+                          aria-label={saved.includes(item.id) ? 'Remover dos salvos' : 'Salvar artigo'}
+                          title={saved.includes(item.id) ? 'Salvo!' : 'Salvar para ler depois'}
+                          style={{ color: saved.includes(item.id) ? 'var(--amber)' : '' }}
+                        >
+                          {saved.includes(item.id) ? '🔖 SALVO' : '☆ SALVAR'}
+                        </button>
+                        <button className="card-btn" aria-label={`Ler análise: ${item.title}`}>Análise →</button>
+                      </div>
                     </div>
                   </article>
                 </React.Fragment>
@@ -822,6 +900,39 @@ export default function Home() {
           {/* ── Sidebar (desktop only) ── */}
           <aside className="sidebar" aria-label="Painel lateral de inteligência ao vivo">
             <MacroTicker />
+
+            {/* Mais Lidas */}
+            {data.length > 0 && (
+              <div style={{ marginTop: '24px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--r)', padding: '20px' }}>
+                <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--red)', letterSpacing: '2px', marginBottom: '12px' }}>🔥 MAIS LIDAS</div>
+                {data.slice(0, 5).map((item, i) => (
+                  <div
+                    key={item.id}
+                    onClick={() => handleSetArticle(item)}
+                    style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer' }}
+                  >
+                    <span style={{ fontSize: '18px', fontWeight: 900, color: 'var(--muted)', minWidth: '24px' }}>{i + 1}</span>
+                    <div>
+                      <div style={{ fontSize: '11px', color: 'var(--red)', fontWeight: 700, marginBottom: '4px' }}>{item.category}</div>
+                      <div style={{ fontSize: '12px', lineHeight: 1.4, color: 'var(--soft)' }}>{item.title}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Artigos Salvos */}
+            {saved.length > 0 && (
+              <div style={{ marginTop: '24px', background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 'var(--r)', padding: '20px' }}>
+                <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--amber)', letterSpacing: '2px', marginBottom: '12px' }}>🔖 ARTIGOS SALVOS ({saved.length})</div>
+                {data.filter(i => saved.includes(i.id)).slice(0, 3).map(item => (
+                  <div key={item.id} onClick={() => handleSetArticle(item)} style={{ fontSize: '12px', color: 'var(--soft)', padding: '8px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer', lineHeight: 1.4 }}>
+                    {item.title}
+                  </div>
+                ))}
+              </div>
+            )}
+
             <LiveFeed data={data} />
             <div style={{ marginTop: '24px' }}>
               <AdSlot label="PARCEIRO VERIFICADO" />

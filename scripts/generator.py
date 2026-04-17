@@ -280,51 +280,49 @@ def rewrite_as_intel_report(news_item):
 
     extra_context = f"\nContexto adicional: {news_item.get('description', '')}" if news_item.get("description") else ""
 
-    prompt = f"""Você é um analista sênior de inteligência geopolítica classificação GOLD, com 20 anos de experiência em conflitos globais, relações internacionais e segurança estratégica. Seu trabalho é converter manchetes brutas em Relatórios de Inteligência profundos, imparciais e 100% factuais em Português do Brasil.
+    prompt = f"""Você é um analista sênior de inteligência geopolítica com 20 anos de experiência — equivalente a um editor sênior da Jane's Defence Weekly, Foreign Affairs ou The Economist Intelligence Unit. Seu trabalho é converter manchetes brutas em Relatórios de Inteligência profundos, factuais e jornalisticamente íntegros em Português do Brasil.
 
 Manchete: {news_item['title']}
 Categoria: {news_item['category']}
-Fonte: {news_item.get('source_label', 'Não informado')}{extra_context}
+Fonte de origem: {news_item.get('source_label', 'Não informado')}{extra_context}
 
 Gere um JSON com EXATAMENTE estas chaves:
 
-1. "title": Título profissional e factual em PT-BR (máx 130 chars). Inclua localização geográfica específica quando possível.
+1. "title": Título factual em PT-BR (máx 130 chars). Inclua localização geográfica específica.
 
-2. "excerpt": Resumo executivo de 3-4 frases (sem adjetivos emocionais). Deve cobrir: O QUE aconteceu, ONDE, QUANDO e QUEM está envolvido.
+2. "excerpt": Resumo executivo de 3-4 frases factuais (sem adjetivos emocionais). Cubra: O QUE aconteceu, ONDE, QUANDO, QUEM está envolvido — com atribuição de fonte (ex: "segundo o ISW", "conforme reportou a Reuters").
 
-3. "bullet_points": Lista JSON de 6 strings com fatos técnicos concretos. Inclua: datas exatas ou aproximadas, coordenadas geográficas ou locais específicos, nomes de unidades militares/grupos, armamentos identificados, cifras (baixas, deslocados, recursos), declarações de porta-vozes oficiais.
+3. "bullet_points": Lista JSON de 6 strings com fatos técnicos verificáveis. Inclua quando disponível: datas, unidades militares, armamentos com designação (ex: "míssil Kh-101"), cifras de organismos oficiais (ONU, ACNUR), declarações de porta-vozes nomeados.
 
 4. "content": Relatório analítico com 10 parágrafos densos cobrindo:
-   (1) Contexto histórico de 5-10 anos
-   (2) Linha do tempo dos eventos recentes (últimas 72h)
-   (3) Mapa de atores: quem são, posições, capacidades militares
-   (4) Situação tática atual no campo de batalha ou área de conflito
-   (5) Dimensão diplomática: respostas de líderes, ONU, organismos internacionais
-   (6) Impacto humanitário: civis afetados, deslocamentos, crise humanitária
-   (7) Dimensão econômica: energia, commodities, sanções, bloqueios comerciais
-   (8) Papel dos atores externos: EUA, Rússia, China, UE, potências regionais
-   (9) Análise de inteligência: movimentações, sinais de escalada ou desescalada
-   (10) Perspectivas de 30-90 dias: cenários possíveis (otimista, neutro, pessimista)
+   (1) Contexto histórico de 5-10 anos — cite fatos datados
+   (2) Linha do tempo dos eventos recentes — atribua a fontes (ISW, Reuters, AP, AFP)
+   (3) Mapa de atores: quem são, posições conhecidas, capacidades militares declaradas
+   (4) Situação tática atual — baseada em OSINT público e fontes abertas
+   (5) Dimensão diplomática: declarações reais de líderes, resoluções da ONU com número
+   (6) Impacto humanitário: dados do ACNUR, OCHA, Cruz Vermelha
+   (7) Dimensão econômica: dados de Bloomberg, EIA, FMI quando aplicável
+   (8) Papel dos atores externos: baseado em declarações públicas verificáveis
+   (9) Análise de inteligência OSINT: imagens de satélite publicadas (Maxar, Planet Labs), relatórios abertos
+   (10) Perspectivas 30-90 dias: 3 cenários (otimista/neutro/pessimista) com base em precedentes históricos
 
-5. "strategic_analysis": 3 parágrafos sobre:
-   - Impacto macro: petróleo, gás, bolsas, cadeias de suprimento
-   - Alianças e reposicionamentos geopolíticos
-   - Risco de escalada: convencional, proxy, nuclear/CBRN
+5. "strategic_analysis": 3 parágrafos analíticos sobre impacto macro, rebalanceamento de alianças e risco de escalada — escrito como um think-tank (ex: RAND, IISS, Chatham House).
 
-6. "threat_level": Uma string — "🟢 BAIXO", "🟡 MODERADO", "🟠 ELEVADO" ou "🔴 CRÍTICO" — baseada na probabilidade de escalada.
+6. "threat_level": "🟢 BAIXO", "🟡 MODERADO", "🟠 ELEVADO" ou "🔴 CRÍTICO" — baseado na probabilidade de escalada.
 
-7. "confidence_score": Número entre 80 e 99 representando a confiança analítica no relatório.
+7. "confidence_score": Número 80-99 representando confiança analítica baseada na qualidade das fontes disponíveis.
 
 8. "category": exatamente "{news_item['category']}"
 
-9. "sentiment": Uma string — APENAS "ESCALADA", "DIPLOMACIA" ou "IMPASSE". Onde ESCALADA é piora do conflito, DIPLOMACIA são tratados/negociação, e IMPASSE é ausência de avanço.
+9. "sentiment": APENAS "ESCALADA", "DIPLOMACIA" ou "IMPASSE".
 
-REGRAS ABSOLUTAS:
-- Zero especulação não fundamentada. Zero viés editorial. Zero sensacionalismo.
-- Apenas fatos verificáveis ou declarações de fontes oficiais públicas.
-- Terminologia técnica de defesa e diplomacia (ex: "artilhagem autopropulsada", "linha de contato", "escalada assimétrica").
-- Se não houver dados suficientes para um parágrafo, indique "Dados insuficientes para análise conclusiva neste segmento."
-- O relatório deve ter peso jornalístico de revista especializada como Jane's Defence Weekly ou Foreign Affairs.
+REGRAS ABSOLUTAS DE CREDIBILIDADE JORNALÍSTICA:
+- NUNCA cite o portal, a plataforma ou o sistema de IA como fonte de informação ("o sistema detectou", "nossos analistas captaram", etc.). PROIBIDO.
+- SEMPRE use linguagem de atribuição: "segundo o ISW", "conforme a Reuters", "de acordo com declaração do Kremlin", "dados da ONU indicam".
+- Se não há fonte verificável para uma afirmação específica, escreva explicitamente: "Dados insuficientes para análise conclusiva neste segmento."
+- NUNCA invente cifras, nomes de unidades, coordenadas ou datas específicas sem base verificável.
+- Use terminologia técnica correta: "artilhagem autopropulsada", "linha de contato", "escalada assimétrica", "supressão de defesas aéreas (SEAD)".
+- Peso jornalístico equivalente a Jane's Defence Weekly, Foreign Affairs ou The Economist.
 """
 
     payload = {

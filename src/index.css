@@ -161,7 +161,7 @@ h1,h2,h3,h4,.brand{font-family:var(--display);}
 /* Featured Card Premium */
 .featured-card {
   background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(10, 12, 18, 0.9));
-  background-image: url('file:///C:/Users/user/.gemini/antigravity/brain/b43d5ce0-7ca3-485e-b220-06a663ca0f13/hero_tactical_command_1775171526090.png');
+  background-image: url('https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=1920&auto=format&fit=crop');
   background-size: cover; background-position: right;
   border: 1px solid var(--border-cyan);
   box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.5);

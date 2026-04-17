@@ -49,14 +49,23 @@ const isNew = (article) => {
 // ── Sub-components & "Faz Tudo" Widgets ──────────────────────────────────────────────
 
 const MacroTicker = () => {
-  const [prices, setPrices] = useState({ brent: 82.45, gold: 2341.10, btc: 64230.00 })
+  const [prices, setPrices] = useState({
+    brent: { value: 82.45, up: true },
+    gold:  { value: 2341.10, up: false },
+    btc:   { value: 64230.00, up: true }
+  })
   React.useEffect(() => {
     const int = setInterval(() => {
-      setPrices(p => ({
-        brent: p.brent + (Math.random() - 0.5) * 0.5,
-        gold: p.gold + (Math.random() - 0.5) * 5,
-        btc: p.btc + (Math.random() - 0.5) * 100
-      }))
+      setPrices(p => {
+        const brentDelta = (Math.random() - 0.5) * 0.5
+        const goldDelta  = (Math.random() - 0.5) * 5
+        const btcDelta   = (Math.random() - 0.5) * 100
+        return {
+          brent: { value: p.brent.value + brentDelta, up: brentDelta >= 0 },
+          gold:  { value: p.gold.value + goldDelta,   up: goldDelta  >= 0 },
+          btc:   { value: p.btc.value + btcDelta,     up: btcDelta   >= 0 }
+        }
+      })
     }, 3000)
     return () => clearInterval(int)
   }, [])
@@ -64,17 +73,17 @@ const MacroTicker = () => {
     <div className="macro-ticker">
       <div className="macro-title">🌐 MACRO IMPACTO (AO VIVO)</div>
       <div className="macro-items">
-        <div className={`macro-item ${Math.random() > 0.5 ? 'up' : 'down'}`}>
+        <div className={`macro-item ${prices.brent.up ? 'up' : 'down'}`}>
           <span className="macro-label">Petróleo BRENT</span>
-          <span className="macro-value">${prices.brent.toFixed(2)}</span>
+          <span className="macro-value">{prices.brent.up ? '▲' : '▼'} ${prices.brent.value.toFixed(2)}</span>
         </div>
-        <div className={`macro-item ${Math.random() > 0.5 ? 'up' : 'down'}`}>
+        <div className={`macro-item ${prices.gold.up ? 'up' : 'down'}`}>
           <span className="macro-label">Ouro (Oz)</span>
-          <span className="macro-value">${prices.gold.toFixed(2)}</span>
+          <span className="macro-value">{prices.gold.up ? '▲' : '▼'} ${prices.gold.value.toFixed(2)}</span>
         </div>
-        <div className={`macro-item ${Math.random() > 0.5 ? 'up' : 'down'}`}>
+        <div className={`macro-item ${prices.btc.up ? 'up' : 'down'}`}>
           <span className="macro-label">Bitcoin</span>
-          <span className="macro-value">${prices.btc.toFixed(0)}</span>
+          <span className="macro-value">{prices.btc.up ? '▲' : '▼'} ${prices.btc.value.toFixed(0)}</span>
         </div>
       </div>
     </div>
@@ -178,10 +187,58 @@ const AFFILIATE_PRODUCTS = [
   }
 ]
 
+// ── Ad Network Config (substitua os IDs quando se cadastrar) ─────────────────
+// Para ativar uma rede: coloque o ID/código que eles te derem aqui.
+// Deixe em branco ('') para usar o fallback de afiliados.
+const AD_NETWORK = {
+  provider: '',          // 'adsterra' | 'a-ads' | 'monetag' | '' (usa fallback)
+  adsterraKey:  '',     // Cole aqui o "Key" do Adsterra após cadastro
+  aadsId:       '',     // Cole aqui o ID do A-Ads (ex: '2345678')
+  monetagId:    '',     // Cole aqui o Zone ID do Monetag
+}
+
 const AdSlot = ({ label, index = 0 }) => {
   const item = AFFILIATE_PRODUCTS[index % AFFILIATE_PRODUCTS.length]
+
+  // Se tiver uma rede configurada, renderiza o slot dela
+  if (AD_NETWORK.provider === 'adsterra' && AD_NETWORK.adsterraKey) {
+    return (
+      <div className="ad-slot" style={{ position: 'relative', minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {label && <span style={{ position: 'absolute', top: 6, left: 10, fontSize: '8px', color: 'var(--muted)', letterSpacing: '1px' }}>PUBLICIDADE</span>}
+        {/* Adsterra — substitua o attrkey pelo seu */}
+        <script async src={`//www.topcreativeformat.com/${AD_NETWORK.adsterraKey}/invoke.js`} />
+        <div id={`atContainer-${AD_NETWORK.adsterraKey}`} />
+      </div>
+    )
+  }
+
+  if (AD_NETWORK.provider === 'a-ads' && AD_NETWORK.aadsId) {
+    return (
+      <div className="ad-slot" style={{ position: 'relative', minHeight: '100px' }}>
+        {label && <span style={{ position: 'absolute', top: 6, left: 10, fontSize: '8px', color: 'var(--muted)', letterSpacing: '1px' }}>PUBLICIDADE</span>}
+        <iframe
+          data-aa={AD_NETWORK.aadsId}
+          src={`//ad.a-ads.com/${AD_NETWORK.aadsId}?size=728x90`}
+          style={{ width: '100%', border: 0, padding: 0, overflow: 'hidden', backgroundColor: 'transparent' }}
+          title="Anuncio A-Ads"
+        />
+      </div>
+    )
+  }
+
+  if (AD_NETWORK.provider === 'monetag' && AD_NETWORK.monetagId) {
+    return (
+      <div className="ad-slot" style={{ position: 'relative', minHeight: '100px' }}>
+        {label && <span style={{ position: 'absolute', top: 6, left: 10, fontSize: '8px', color: 'var(--muted)', letterSpacing: '1px' }}>PUBLICIDADE</span>}
+        <div id={`monetag-zone-${AD_NETWORK.monetagId}`} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('voocultu.com',${AD_NETWORK.monetagId},document.createElement('script'))` }} />
+      </div>
+    )
+  }
+
+  // Fallback — afiliado premium enquanto a rede não está configurada
   return (
-    <a href={item.url} target="_blank" rel="noreferrer" className="ad-slot" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', padding: '32px 24px', gap: '8px', zIndex: 10, position: 'relative' }}>
+    <a href={item.url} target="_blank" rel="noopener noreferrer" className="ad-slot" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', padding: '32px 24px', gap: '8px', zIndex: 10, position: 'relative' }}>
       {label && <span style={{ position: 'absolute', top: 10, left: 14, fontSize: '9px', color: 'var(--cyan)' }}>{label}</span>}
       <div style={{ fontSize: '36px', marginBottom: '4px' }}>{item.icon}</div>
       <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text)', letterSpacing: '1px' }}>{item.title}</div>
@@ -193,18 +250,61 @@ const AdSlot = ({ label, index = 0 }) => {
   )
 }
 
+// ── Configurar sua chave PIX aqui ─────────────────────────────────────────────
+const PIX_KEY = 'SEU_EMAIL_OU_CPF_AQUI@pix.br' // Substitua pela sua chave PIX real
+
+const SupportPanel = () => {
+  const [copied, setCopied] = useState(false)
+  const handleCopy = () => {
+    navigator.clipboard.writeText(PIX_KEY)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <div style={{
+      background: 'linear-gradient(135deg, rgba(16,185,129,0.05), rgba(0,0,0,0.8))',
+      border: '1px solid rgba(16,185,129,0.4)', borderRadius: 'var(--r)', padding: '20px', marginTop: '24px'
+    }}>
+      <div style={{ fontSize: '10px', fontWeight: 800, color: '#10b981', letterSpacing: '2px', marginBottom: '12px' }}>
+        💰 APOIE A INTELIGÊNCIA
+      </div>
+      <p style={{ fontSize: '12px', color: 'var(--soft)', marginBottom: '16px', lineHeight: 1.6 }}>
+        Este portal é mantido por leitores como você. Contribuições vão direto para os servidores e IAs.
+      </p>
+      <button
+        onClick={handleCopy}
+        style={{
+          width: '100%', padding: '10px', background: copied ? 'rgba(16,185,129,0.2)' : 'rgba(16,185,129,0.1)',
+          border: '1px solid #10b981', color: '#10b981', borderRadius: '4px', fontSize: '11px',
+          fontWeight: 900, cursor: 'pointer', letterSpacing: '1px', transition: 'all 0.2s'
+        }}
+      >
+        {copied ? '✔ CHAVE COPIADA!' : '📲 COPIAR CHAVE PIX'}
+      </button>
+      <div style={{ marginTop: '8px', textAlign: 'center' }}>
+        <a
+          href="https://apoia.se" target="_blank" rel="noopener noreferrer"
+          style={{ fontSize: '10px', color: 'var(--muted)', textDecoration: 'none' }}
+        >
+          ❤️ Ou apoie pelo Apoia.se →
+        </a>
+      </div>
+    </div>
+  )
+}
+
 const AffiliateSection = () => (
   <div className="affiliate-section">
     <div className="affiliate-title">🛰️ FONTES & EQUIPAMENTOS RECOMENDADOS</div>
     <div className="affiliate-grid">
-      <a href="https://nordvpn.com" target="_blank" rel="noreferrer" className="affiliate-item">
+      <a href="https://nordvpn.com" target="_blank" rel="noopener noreferrer" className="affiliate-item">
         <span className="affiliate-icon">🛡️</span>
         <div className="affiliate-text">
           <div>NordVPN — Segurança OSINT</div>
           <span>Proteja seu tráfego de inteligência.</span>
         </div>
       </a>
-      <a href="https://amazon.com" target="_blank" rel="noreferrer" className="affiliate-item">
+      <a href="https://amazon.com.br" target="_blank" rel="noopener noreferrer" className="affiliate-item">
         <span className="affiliate-icon">📚</span>
         <div className="affiliate-text">
           <div>Geopolítica: Livro Essencial</div>
@@ -432,6 +532,8 @@ export default function Home() {
   React.useEffect(() => {
     if (isTerminal) document.body.classList.add('theme-terminal')
     else document.body.classList.remove('theme-terminal')
+    // BUG #2 FIX: cleanup ao desmontar o componente (ex: navegar para /privacidade)
+    return () => document.body.classList.remove('theme-terminal')
   }, [isTerminal])
 
   const handleSetArticle = (art) => {
@@ -712,8 +814,9 @@ export default function Home() {
             <MacroTicker />
             <LiveFeed data={data} />
             <div style={{ marginTop: '24px' }}>
-              <AdSlot />
+              <AdSlot label="PARCEIRO VERIFICADO" />
             </div>
+            <SupportPanel />
           </aside>
         </div>
       </main>

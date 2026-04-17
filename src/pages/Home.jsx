@@ -603,7 +603,7 @@ export default function Home() {
               {isPlaying ? '🔊 AUDIO ON' : '🔈 AUDIO OFF'}
             </button>
             <button
-              className="audio-btn"
+              className="audio-btn mobile-hide"
               onClick={() => setIsTerminal(!isTerminal)}
               style={{ color: isTerminal ? '#0f0' : '', borderColor: isTerminal ? '#0f0' : '' }}
             >
@@ -668,6 +668,11 @@ export default function Home() {
 
             {/* ── Daily Briefing ── */}
             <DailyBriefing topArticles={data.slice(0, 3)} />
+
+            {/* ── Macro Ticker (mobile only — aparece inline quando sidebar está oculta) ── */}
+            <div className="mobile-only">
+              <MacroTicker />
+            </div>
 
             {/* ── Intelligence Radar ── */}
             <IntelRadar onFilter={handleRadarFilter} newsData={data} />
@@ -806,10 +811,15 @@ export default function Home() {
               </div>
             )}
 
+            {/* Suporte/PIX mobile (aparece abaixo do grid no mobile) */}
+            <div className="mobile-only" style={{ marginTop: '24px' }}>
+              <SupportPanel />
+            </div>
+
             <Newsletter />
           </div>
 
-          {/* ── Sidebar ── */}
+          {/* ── Sidebar (desktop only) ── */}
           <aside className="sidebar" aria-label="Painel lateral de inteligência ao vivo">
             <MacroTicker />
             <LiveFeed data={data} />

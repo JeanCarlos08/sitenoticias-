@@ -707,6 +707,8 @@ export default function Home() {
                   {item}
                 </li>
               ))}
+              <li className="nav-item mobile-hide"><Link to="/sobre" style={{ textDecoration: 'none', color: 'inherit' }}>Sobre</Link></li>
+              <li className="nav-item mobile-hide"><Link to="/contato" style={{ textDecoration: 'none', color: 'inherit' }}>Contato</Link></li>
             </ul>
           </nav>
         </div>
@@ -968,6 +970,10 @@ export default function Home() {
             Data Sources: Google Intelligence • OSINT Reddit • Global NewsAPI
           </p>
           <div className="footer-links" aria-label="Links legais">
+            <Link to="/sobre" className="footer-legal-link">Sobre</Link>
+            <span aria-hidden="true"> · </span>
+            <Link to="/contato" className="footer-legal-link">Contato</Link>
+            <span aria-hidden="true"> · </span>
             <Link to="/privacidade" className="footer-legal-link">Política de Privacidade</Link>
             <span aria-hidden="true"> · </span>
             <Link to="/termos" className="footer-legal-link">Termos de Uso</Link>

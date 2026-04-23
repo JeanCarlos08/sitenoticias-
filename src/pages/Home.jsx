@@ -211,9 +211,18 @@ const AdSlot = ({ label, index = 0 }) => {
   // Se tiver uma rede configurada, renderiza o slot dela
   if (AD_NETWORK.provider === 'adsterra' && AD_NETWORK.adsterraKey) {
     return (
-      <div className="ad-slot" style={{ position: 'relative', minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {label && <span style={{ position: 'absolute', top: 6, left: 10, fontSize: '8px', color: 'var(--muted)', letterSpacing: '1px' }}>PUBLICIDADE</span>}
-        {/* Adsterra — substitua o attrkey pelo seu */}
+      <div className="ad-slot" style={{ 
+        position: 'relative', 
+        minHeight: '120px', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'rgba(0,0,0,0.3)',
+        border: '1px dashed var(--border)',
+        borderRadius: '8px',
+        margin: '20px 0'
+      }}>
+        <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', background: 'var(--bg)', padding: '0 10px', fontSize: '9px', color: 'var(--muted)', letterSpacing: '2px', fontWeight: 800 }}>PARCEIRO VERIFICADO</div>
         <script async src={`//www.topcreativeformat.com/${AD_NETWORK.adsterraKey}/invoke.js`} />
         <div id={`atContainer-${AD_NETWORK.adsterraKey}`} />
       </div>
@@ -542,7 +551,12 @@ const ArticleModal = ({ article, onClose }) => {
               )}
             </div>
           )}
-          <AdSlot label="INNER REPORT AD" />
+        </div>
+
+        <div style={{ padding: '0 30px', margin: '20px 0' }}>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+            <AdSlot label="PARCEIRO ESTRATÉGICO" />
+          </div>
         </div>
 
         <AffiliateSection />
